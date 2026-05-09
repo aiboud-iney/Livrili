@@ -1,13 +1,8 @@
-@import url(https:
-@import url(https:
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@tailwind utilities;
 
-@source ".*.{js,ts,jsx,tsx}";
-@source "../components*.{js,ts,jsx,tsx}";
-@source "../hooks*.{js,ts,jsx,tsx}";
+@source "../components/";
+@source "../hooks/";
 
 @custom-variant dark (&:is(.dark *));
 @utility container {
