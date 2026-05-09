@@ -8,7 +8,6 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "psql $DATABASE_URL -f seed.sql"
-
   },
   "keywords": [],
   "author": "",
