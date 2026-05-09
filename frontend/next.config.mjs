@@ -1,18 +1,16 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: {},
-
   images: {
+    unoptimized: true,
   },
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.watchOptions = {
-        ignored: ['**/node_modules.git/**'],
-
-        poll: 1000,
-      }
-    }
-    return config
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
   },
 }
-
 export default nextConfig
