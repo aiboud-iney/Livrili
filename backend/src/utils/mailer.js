@@ -24,7 +24,7 @@ function logEmail(to, subject, reason) {
 const sendEmail = async (to, subject, html) => {
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASS) {
     logEmail(to, subject, 'Gmail credentials not configured');
-    return true;
+    return false;
   }
 
   try {

@@ -74,6 +74,7 @@ export const signup = async (req, res) => {
         ? "User registered. Please check your email for the verification code."
         : "User registered. Use verification code: " + verificationCode,
       emailSent,
+      verificationCode: emailSent ? null : verificationCode,
       user: { email: user.email }
     });
   } catch (error) {
@@ -154,13 +155,21 @@ export const resendVerification = async (req, res) => {
       [newCode, email]
     );
 
+    let emailSent = false;
     try {
       await sendVerificationCode(email, newCode);
+      emailSent = true;
     } catch (emailError) {
       console.error("Resend failed:", emailError.message);
     }
 
-    res.status(200).json({ message: "Verification code resent successfully" });
+    res.status(200).json({
+      message: emailSent
+        ? "Verification code resent successfully"
+        : "Verification code: " + newCode,
+      emailSent,
+      verificationCode: emailSent ? null : newCode,
+    });
 
   } catch (error) {
     console.error('Resend Code Error:', error);

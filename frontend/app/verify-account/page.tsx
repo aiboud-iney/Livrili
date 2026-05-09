@@ -67,8 +67,12 @@ export default function VerifyAccount() {
   const t = translations[lang]
 
   const email = searchParams.get('email') || ''
+  const initialCode = searchParams.get('code') || ''
 
-  const [code, setCode] = useState(['', '', '', '', '', ''])
+  const [code, setCode] = useState(() => {
+    if (initialCode.length === 6) return initialCode.split('')
+    return ['', '', '', '', '', '']
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [isResending, setIsResending] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -177,13 +181,22 @@ export default function VerifyAccount() {
         body: JSON.stringify({ email }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
         throw new Error('Failed to resend code')
       }
 
       setCountdown(60)
       setCanResend(false)
-      setSuccessMessage('New verification code sent!')
+
+      const newCode = data.verificationCode
+      if (newCode) {
+        setCode(newCode.split(''))
+        setSuccessMessage(`New verification code: ${newCode}`)
+      } else {
+        setSuccessMessage('New verification code sent!')
+      }
 
     } catch (err) {
       console.error('Resend error:', err)

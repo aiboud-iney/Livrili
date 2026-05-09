@@ -83,7 +83,7 @@ export function ProfilePage({
     navSettings:         '/icons/settings gray phone.png',
     navDashboard:        '/icons/dashboard gray phone.png',
     navProfile:          '/icons/profile gray phone.png',
-    navHomeActive:       '/icons/home active phone.png',
+    navHomeActive:       '/icons/home-active phone.png',
     navSettingsActive:   '/icons/settings-active phone.png',
     navDashboardActive:  '/icons/dashboard-active phone.png',
     navProfileActive:    '/icons/profile-active phone.png',

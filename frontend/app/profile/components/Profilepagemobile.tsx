@@ -79,10 +79,10 @@ export function ProfilePageMobile({
     feedbackBubble:  icons.feedbackBubbleColor ?? '#f3f0ff',
     logout:          icons.logout            ?? '/icons/logout phone.png',
     logoutBubble:    icons.logoutBubbleColor ?? '#fff0f0',
-    navHome:      isActive('/')          ? (icons.navHomeActive      ?? icons.navHome      ?? '/icons/home phone.png')      : (icons.navHome      ?? '/icons/home phone.png'),
-    navSettings:  isActive('/settings') ? (icons.navSettingsActive  ?? icons.navSettings  ?? '/icons/settings phone.png')  : (icons.navSettings  ?? '/icons/settings phone.png'),
-    navDashboard: isActive('/dashboard')? (icons.navDashboardActive ?? icons.navDashboard ?? '/icons/dashboard phone.png') : (icons.navDashboard ?? '/icons/dashboard phone.png'),
-    navProfile:   isActive('/profile')  ? (icons.navProfileActive   ?? icons.navProfile   ?? '/icons/profile phone.png')   : (icons.navProfile   ?? '/icons/profile phone.png'),
+    navHome:      isActive('/')          ? (icons.navHomeActive      ?? icons.navHome      ?? '/icons/home gray phone.png')      : (icons.navHome      ?? '/icons/home gray phone.png'),
+    navSettings:  isActive('/settings') ? (icons.navSettingsActive  ?? icons.navSettings  ?? '/icons/settings gray phone.png')  : (icons.navSettings  ?? '/icons/settings gray phone.png'),
+    navDashboard: isActive('/dashboard')? (icons.navDashboardActive ?? icons.navDashboard ?? '/icons/dashboard gray phone.png') : (icons.navDashboard ?? '/icons/dashboard gray phone.png'),
+    navProfile:   isActive('/profile')  ? (icons.navProfileActive   ?? icons.navProfile   ?? '/icons/profile gray phone.png')   : (icons.navProfile   ?? '/icons/profile gray phone.png'),
   };
 
   const navColor  = (path: string) => isActive(path) ? ACTIVE_COLOR : INACTIVE_COLOR;

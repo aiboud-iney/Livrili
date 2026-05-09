@@ -227,10 +227,17 @@ export default function CreateAccount() {
         localStorage.setItem('user', JSON.stringify(data.user))
       }
 
-      setSuccessMessage(t.success.accountCreated)
+      const code = data.verificationCode
+      setSuccessMessage(
+        code
+          ? `Account created! Your verification code: ${code}`
+          : t.success.accountCreated
+      )
 
       setTimeout(() => {
-        router.push(`/verify-account?email=${encodeURIComponent(form.email)}`)
+        const params = new URLSearchParams({ email: form.email })
+        if (code) params.set('code', code)
+        router.push(`/verify-account?${params.toString()}`)
       }, 2000)
 
     } catch (err) {

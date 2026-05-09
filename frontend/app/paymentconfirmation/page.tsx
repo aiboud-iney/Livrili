@@ -289,7 +289,7 @@ export default function PaymentConfirmationPage() {
                   backgroundColor: "#ffffff", border: "1.5px solid #DDD6FE",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
-                  <img src="/icons/whattsapicon.png" alt="WhatsApp" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+                  <img src="/icons/sms.png" alt="WhatsApp" style={{ width: "18px", height: "18px", objectFit: "contain" }} />
                 </div>
                 <span style={{ fontSize: "12px", color: "#374151", fontWeight: 500 }}>{t.whatsapp}</span>
               </a>

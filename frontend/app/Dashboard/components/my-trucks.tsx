@@ -32,7 +32,6 @@ const ICONS = {
   calendar: "/icons/route dashboard calendar.png",
   weight: "/icons/route dashboard weight.png",
   volume: "/icons/route dashboard volume.png",
-  license: "/icons/license-plate.png",
 };
 
 const normalizeTruckPhotoUrl = (rawPath: string): string => {
