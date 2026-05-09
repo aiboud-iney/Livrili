@@ -1,0 +1,107 @@
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  position: relative;
+  z-index: 50;
+  animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.card {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.title {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.form {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.footer {
+  animation: fadeIn 0.8s ease 0.6s both;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.inputError {
+  border-color: #fca5a5 !important;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.hintText {
+  color: #aaaaaa;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+
+  .main {
+    background-color: #F4F4F4 !important;
+    align-items: flex-start;
+    padding: 0 !important;
+  }
+
+  .header {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .card {
+    background-color: #F4F4F4 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 24px 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+    .footer {
+    background-color: #F4F4F4 !important;
+    padding: 16px 20px;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .footerLink {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+}

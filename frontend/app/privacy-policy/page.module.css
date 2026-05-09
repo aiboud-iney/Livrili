@@ -1,0 +1,228 @@
+.page {
+  min-height: 100vh;
+  background-color: #F4F4F4;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #ffffff;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.logoBox {
+  width: 36px;
+  height: 36px;
+  background-color: #7C3AED;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.brandName {
+  font-family: 'Kamerik 105', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #111111;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 48px 56px;
+  width: 100%;
+  max-width: 860px;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f4ffe0;
+  border: 1.5px solid #BFFF00;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #202020;
+  margin-bottom: 20px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #BFFF00;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111111;
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+
+.lastUpdated {
+  font-size: 13px;
+  color: #aaaaaa;
+  margin-bottom: 36px;
+}
+
+.divider {
+  width: 60px;
+  height: 4px;
+  background-color: #7C3AED;
+  border-radius: 999px;
+  margin-bottom: 36px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #7C3AED;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.sectionText {
+  font-size: 14px;
+  color: #555555;
+  line-height: 1.8;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.contactCard {
+  background-color: #f9f9f9;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.contactName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 2px;
+}
+
+.contactEmail {
+  font-size: 12px;
+  color: #7C3AED;
+  text-decoration: none;
+}
+
+.contactRole {
+  font-size: 11px;
+  color: #aaaaaa;
+  margin-bottom: 4px;
+}
+
+.footer {
+  padding: 20px 32px;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  animation: fadeIn 0.8s ease 0.5s both;
+}
+
+.footerLink {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  color: #7C3AED;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0;
+    padding: 24px 16px;
+    box-shadow: none;
+  }
+
+  .main {
+    padding: 24px 16px;
+  }
+
+  .header {
+    padding: 12px 16px;
+  }
+
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .footer {
+    padding: 16px;
+  }
+}
