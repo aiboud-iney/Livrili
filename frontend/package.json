@@ -2,11 +2,13 @@
   "name": "livriliproject",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "set NODE_OPTIONS=--max-old-space-size=4096&& set WATCHPACK_POLLING=1&& next dev",
-    "build": "next build",
-    "start": "next start"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start -p $PORT -H 0.0.0.0",
+  "lint": "next lint"
+},
+
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
