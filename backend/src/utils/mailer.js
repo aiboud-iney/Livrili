@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 import { otpTemplate } from '../views/emails/otp.js';
@@ -10,8 +10,17 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = 'Livrili <onboarding@resend.dev>';
+const transporter = nodemailer.createTransport({
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.BREVO_SMTP_USER,
+    pass: process.env.BREVO_SMTP_PASS,
+  },
+});
+
+const FROM = '"Livrili" <livrili.team@gmail.com>';
 
 function logEmail(to, subject, reason) {
   console.log(`\n========== EMAIL (${reason}) ==========`);
@@ -21,19 +30,19 @@ function logEmail(to, subject, reason) {
 }
 
 const sendEmail = async (to, subject, html) => {
-  if (!process.env.RESEND_API_KEY) {
-    logEmail(to, subject, 'Resend API key not configured');
+  if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASS) {
+    logEmail(to, subject, 'Brevo SMTP not configured');
     return false;
   }
 
   try {
-    const result = await resend.emails.send({
+    const info = await transporter.sendMail({
       from: FROM,
       to,
       subject,
       html,
     });
-    console.log('Email sent:', result.id);
+    console.log('Email sent:', info.messageId);
     return true;
   } catch (error) {
     console.error('Error sending email:', error.message);
@@ -42,10 +51,10 @@ const sendEmail = async (to, subject, html) => {
   }
 };
 
-export const sendVerificationCode = async (to, code, name) => {
+export const sendOtpEmail = async (userEmail, otp) => {
   const subject = 'Verify your Livrili Account';
-  const html = otpTemplate({ name, code });
-  return sendEmail(to, subject, html);
+  const html = otpTemplate({ name: '', code: otp });
+  return sendEmail(userEmail, subject, html);
 };
 
 export const sendWelcomeEmail = async (to, name) => {

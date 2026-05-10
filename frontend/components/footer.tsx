@@ -25,7 +25,11 @@ const translations = {
   en: {
     description: "Revolutionizing Algeria's logistics through technology. We connect the country's most reliable transport network with the businesses that need it.",
     platform: "Platform",
-    platformLinks: ["How It Works", "Features", "Pricing"],
+    platformLinks: [
+      { label: "How It Works", href: "#" },
+      { label: "Features", href: "#" },
+      { label: "Pricing", href: "/pricing" },
+    ],
     company: "Company",
     companyLinks: [
       { label: "About Us",    href: ROUTES.aboutUs   },
@@ -46,7 +50,11 @@ const translations = {
   fr: {
     description: "Révolutionner la logistique algérienne grâce à la technologie. Nous connectons le réseau de transport le plus fiable du pays avec les entreprises qui en ont besoin.",
     platform: "Plateforme",
-    platformLinks: ["Comment ça marche", "Fonctionnalités", "Tarifs"],
+    platformLinks: [
+      { label: "Comment ça marche", href: "#" },
+      { label: "Fonctionnalités", href: "#" },
+      { label: "Tarifs", href: "/pricing" },
+    ],
     company: "Entreprise",
     companyLinks: [
       { label: "À propos",       href: ROUTES.aboutUs   },
@@ -144,14 +152,14 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               {t.platformLinks.map((item) => (
-                <li key={item}>
+                <li key={item.label}>
                   <Link
-                    href="#"
+                    href={item.href}
                     style={{ fontSize: "14px", color: "rgba(255,255,255,0.7)", transition: "color 0.2s" }}
                     onMouseEnter={e => (e.currentTarget.style.color = "#ffffff")}
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}

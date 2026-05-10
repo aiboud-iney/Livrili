@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
-import { sendVerificationCode } from "../utils/mailer.js";
+import { sendOtpEmail } from "../utils/mailer.js";
 
 export const signup = async (req, res) => {
   const {
@@ -63,8 +63,8 @@ export const signup = async (req, res) => {
     let emailSent = false;
 
     try {
-      await sendVerificationCode(email, verificationCode, business_name);
-      emailSent = true;
+      const result = await sendOtpEmail(email, verificationCode);
+      emailSent = result;
     } catch (emailError) {
       console.error("Email sending failed:", emailError.message);
     }
@@ -157,8 +157,8 @@ export const resendVerification = async (req, res) => {
 
     let emailSent = false;
     try {
-      await sendVerificationCode(email, newCode, userResult.rows[0]?.business_name);
-      emailSent = true;
+      const result = await sendOtpEmail(email, newCode);
+      emailSent = result;
     } catch (emailError) {
       console.error("Resend failed:", emailError.message);
     }
