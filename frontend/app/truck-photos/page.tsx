@@ -137,12 +137,28 @@ function TruckPhotosPageContent() {
   };
 
   const handleSave = async () => {
+    if (newPhotos.length === 0) { router.back(); return; }
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const token = localStorage.getItem("authToken");
+      const formData = new FormData();
+      newPhotos.forEach((file) => formData.append("truck_pictures", file));
+
+      const res = await fetch(`${API_BASE_URL}/trucks/${truckId}/photos`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to upload photos");
       router.back();
-    }, 1000);
+    } catch (err) {
+      console.error("Failed to save photos:", err);
+      alert("Failed to save photos");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

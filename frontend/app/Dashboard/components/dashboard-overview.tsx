@@ -179,7 +179,7 @@ export default function DashboardOverview() {
       iconKey: "shipments" as const,
       trend: "+12%",
       trendUp: true,
-      onClick: () => router.push('/dashboard?page=shipments'),
+      onClick: () => router.push('/Dashboard?page=shipments'),
     },
     {
       labelKey: "activeRoutes",
@@ -187,7 +187,7 @@ export default function DashboardOverview() {
       iconKey: "routes" as const,
       trend: "+8%",
       trendUp: true,
-      onClick: () => router.push('/dashboard?page=routes'),
+      onClick: () => router.push('/Dashboard?page=routes'),
     },
     {
       labelKey: "myTrucksLabel",
@@ -195,7 +195,7 @@ export default function DashboardOverview() {
       iconKey: "trucks" as const,
       trend: truckCount > 0 ? "+2" : "0",
       trendUp: truckCount > 0,
-      onClick: () => router.push('/dashboard?page=trucks'),
+      onClick: () => router.push('/Dashboard?page=trucks'),
     },
   ];
 

@@ -140,12 +140,46 @@ function EditTruckPageContent() {
     setIsLoading(true);
     setSubmitError("");
 
-    const payload: EditTruckPayload = {
-      truck_type: truckType,
-      license_plate: licensePlate.trim(),
-      max_tonnage: Number(maxTonnage),
-      max_volume: maxVolume ? Number(maxVolume) : undefined,
-    };
+    try {
+      const token = localStorage.getItem("authToken");
+
+      const payload: EditTruckPayload = {
+        truck_type: truckType,
+        license_plate: licensePlate.trim(),
+        max_tonnage: Number(maxTonnage),
+        max_volume: maxVolume ? Number(maxVolume) : undefined,
+      };
+
+      const res = await fetch(`${apiUrl}/trucks/${truckId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        if (photoFiles.length > 0) {
+          const photoFormData = new FormData();
+          photoFiles.forEach((file) => photoFormData.append("truck_pictures", file));
+          await fetch(`${apiUrl}/trucks/${truckId}/photos`, {
+            method: "POST",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            body: photoFormData,
+          });
+        }
+        router.push("/Dashboard");
+      } else {
+        const data = await res.json();
+        setSubmitError(data.message || t.errors.submitFailed);
+      }
+    } catch (error) {
+      setSubmitError(t.errors.submitFailed);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
     try {
       const token = localStorage.getItem("authToken");
@@ -159,7 +193,7 @@ function EditTruckPageContent() {
       });
 
       if (res.ok) {
-        router.push("/dashboard");
+        router.push("/Dashboard");
       } else {
         const data = await res.json();
         setSubmitError(data.message || t.errors.submitFailed);
@@ -259,7 +293,7 @@ function EditTruckPageContent() {
           <div className="text-center">
             <p className="text-red-500 mb-4">{loadError}</p>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/Dashboard")}
               className="px-6 py-2 bg-[#7C3AED] text-white rounded-lg"
             >
               {lang === "en"

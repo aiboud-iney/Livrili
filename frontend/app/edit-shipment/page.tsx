@@ -217,7 +217,7 @@ function EditShipmentPageContent() {
       });
 
       if (res.ok) {
-        router.push("/dashboard");
+        router.push("/Dashboard");
       } else {
         const data = await res.json();
         setSubmitError(data.message || t.errors.submitFailed);
@@ -319,7 +319,7 @@ function EditShipmentPageContent() {
           <div className="text-center">
             <p className="text-red-500 mb-4">{loadError}</p>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/Dashboard")}
               className="px-6 py-2 bg-[#7C3AED] text-white rounded-lg"
             >
               {lang === "en"

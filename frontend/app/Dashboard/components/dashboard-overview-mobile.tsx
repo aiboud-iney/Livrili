@@ -149,21 +149,21 @@ export default function DashboardOverviewMobile() {
       value: String(shipmentCount).padStart(2, "0"),
       iconKey: "shipments" as const,
       wide: true,
-      onClick: () => router.push('/dashboard?page=shipments'),
+      onClick: () => router.push('/Dashboard?page=shipments'),
     },
     {
       labelKey: "activeRoutes",
       value: String(routeCount).padStart(2, "0"),
       iconKey: "routes" as const,
       wide: false,
-      onClick: () => router.push('/dashboard?page=routes'),
+      onClick: () => router.push('/Dashboard?page=routes'),
     },
     {
       labelKey: "myTrucksLabel",
       value: String(truckCount).padStart(2, "0"),
       iconKey: "trucks" as const,
       wide: false,
-      onClick: () => router.push('/dashboard?page=trucks'),
+      onClick: () => router.push('/Dashboard?page=trucks'),
     },
   ];
 

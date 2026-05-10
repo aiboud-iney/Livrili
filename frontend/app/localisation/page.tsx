@@ -440,7 +440,7 @@ function TruckMap() {
           <p className="text-red-700 mb-4">{error}</p>
           <div className="flex gap-2">
             <button onClick={fetchData} className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4">Retry</button>
-            <button onClick={() => router.push("/dashboard")} className="flex-1 rounded-lg border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4">Back</button>
+            <button onClick={() => router.push("/Dashboard")} className="flex-1 rounded-lg border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4">Back</button>
           </div>
         </div>
       </div>
@@ -453,7 +453,7 @@ function TruckMap() {
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/Dashboard")}
             className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />

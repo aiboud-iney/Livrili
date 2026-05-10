@@ -286,6 +286,12 @@ export default function CreateAccount() {
             {' '}{t.subtitleEnd}
           </p>
 
+          {successMessage && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm font-medium text-center">
+              {successMessage}
+            </div>
+          )}
+
           <div className={styles.form}>
 
             <div className={styles.row}>

@@ -9,6 +9,7 @@ import {
   updateTruck,
   deleteTruck,
   getMyTrucksCount,
+  addTruckPhotos,
 } from "../controllers/truckController.js";
 import { authenticate } from "../middleware/auth.js";
 import { uploadTruck } from "../middleware/upload.js";
@@ -22,6 +23,11 @@ router.post(
   uploadTruck.array("truck_pictures", 5),
   validate(createTruckSchema),
   createTruck,
+);
+router.post(
+  "/:id/photos",
+  uploadTruck.array("truck_pictures", 5),
+  addTruckPhotos,
 );
 router.get("/:id", getTruckById);
 router.put("/:id", updateTruck);

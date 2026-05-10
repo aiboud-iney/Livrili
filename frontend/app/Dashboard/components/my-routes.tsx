@@ -5,6 +5,7 @@ import { useLang } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
 import { getVisiblePages } from "./pagination-utils";
 import { getTruckTypeLabel, getTruckTypeColor } from "@/app/constants/truck-types";
+import { WILAYAS } from "@/app/constants/wilayas";
 
 type RouteStatus = "all" | "active" | "completed";
 
@@ -41,6 +42,8 @@ const ICONS = {
 export default function MyRoutes() {
   const { t, lang } = useLang();
   const [statusFilter, setStatusFilter] = useState<RouteStatus>("all");
+  const [originFilter, setOriginFilter] = useState("");
+  const [destinationFilter, setDestinationFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [updatingRouteId, setUpdatingRouteId] = useState<string | null>(null);
   const router = useRouter();
@@ -201,9 +204,14 @@ export default function MyRoutes() {
   };
 
   const filteredRoutes =
-    statusFilter === "all"
+    (statusFilter === "all"
       ? routes
-      : routes.filter((r) => mapStatus(r.status) === statusFilter);
+      : routes.filter((r) => mapStatus(r.status) === statusFilter))
+    .filter((r) => {
+      if (originFilter && r.origin !== originFilter) return false;
+      if (destinationFilter && r.destination !== destinationFilter) return false;
+      return true;
+    });
 
   const totalPages = Math.ceil(filteredRoutes.length / 3);
   const displayedRoutes = filteredRoutes.slice(
@@ -222,6 +230,26 @@ export default function MyRoutes() {
     <div className="p-10 md:p-16">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-foreground">My Routes</h1>
+      </div>
+
+      {}
+      <div className="flex gap-2 flex-wrap mb-4">
+        <select value={originFilter} onChange={e => setOriginFilter(e.target.value)}
+          className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm bg-white cursor-pointer">
+          <option value="">All Origins</option>
+          {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+        </select>
+        <select value={destinationFilter} onChange={e => setDestinationFilter(e.target.value)}
+          className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm bg-white cursor-pointer">
+          <option value="">All Destinations</option>
+          {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+        </select>
+        {(originFilter || destinationFilter) && (
+          <button onClick={() => { setOriginFilter(""); setDestinationFilter(""); setCurrentPage(1) }}
+            className="px-3 py-1.5 rounded-lg text-sm text-red-600 border border-red-200 hover:bg-red-50 cursor-pointer">
+            Clear
+          </button>
+        )}
       </div>
 
       {}

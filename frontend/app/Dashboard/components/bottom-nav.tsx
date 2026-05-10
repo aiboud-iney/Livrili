@@ -52,7 +52,7 @@ export default function BottomNav() {
   const NAV = [
     { label: t('home'),      path: '/feed',      icon: '/icons/home gray phone.png',       iconActive: '/icons/home-active phone.png'      },
     { label: t('settings'),  path: '/support',   icon: '/icons/settings gray phone.png',     iconActive: '/icons/settings-active phone.png'  },
-    { label: t('dashboard'), path: '/dashboard', icon: '/icons/dashboard gray phone.png',  iconActive: '/icons/dashboard-active phone.png' },
+    { label: t('dashboard'), path: '/Dashboard', icon: '/icons/dashboard gray phone.png',  iconActive: '/icons/dashboard-active phone.png' },
     { label: t('profile'),   path: '/profile',   icon: '/icons/profile gray phone.png',    iconActive: '/icons/profile-active phone.png'   },
   ]
 

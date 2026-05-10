@@ -384,11 +384,30 @@ export function EditProfileMobile({
 
             {}
             <div className="ep-mobile-section-card ep-mobile-card ep-mobile-card-1" style={{ textAlign: 'center' }}>
+              <div className="ep-mobile-avatar" style={{
+                width: '100px', height: '100px', borderRadius: '50%',
+                border: '4px solid #B8FF00', margin: '0 auto 12px',
+                backgroundColor: '#e5e7eb', overflow: 'hidden',
+              }}>
+                <img src={avatarPreview} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
               <input
                 title="file"
                 ref={fileInputRef}
                 type="file"
-                accept="image/*" />
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }} />
+              <button
+                onClick={handleUploadClick}
+                style={{
+                  background: '#7C3AED', color: '#fff', border: 'none',
+                  borderRadius: '8px', padding: '8px 16px', cursor: 'pointer',
+                  fontFamily: "'Kamerik 105', sans-serif", fontSize: '13px', fontWeight: 600,
+                }}
+              >
+                Change photo
+              </button>
             </div>
             <div className="ep-mobile-section-card ep-mobile-card ep-mobile-card-2" style={{ padding: '16px 20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -610,7 +629,7 @@ export function EditProfileMobile({
             )}
           </div>
 
-          <button aria-label="Dashboard" className="mob-nav-item" onClick={() => router.push('/dashboard')}
+          <button aria-label="Dashboard" className="mob-nav-item" onClick={() => router.push('/Dashboard')}
             style={{ color: navColor('/dashboard'), fontWeight: navWeight('/dashboard') }}>
             <img src={ic.navDashboard} alt="" />
             <span>{t('dashboard') || 'Dashboard'}</span>

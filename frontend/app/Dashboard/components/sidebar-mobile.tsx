@@ -14,6 +14,7 @@ const menuItems = [
   { id: 'shipments', labelKey: 'myShipments', iconPath: '/icons/shipments sidebar.png', activeIconPath: '/icons/shipments sidebar active.png' },
   { id: 'routes',    labelKey: 'myRoutes',    iconPath: '/icons/route sidebar.png',     activeIconPath: '/icons/route sidebar active.png'     },
   { id: 'trucks',    labelKey: 'myTrucks',    iconPath: '/icons/trucks sidebar.png',    activeIconPath: '/icons/trucks sidebar active.png'    },
+  { id: 'localisation', labelKey: 'myRouteMap', iconPath: '/icons/route map.png', activeIconPath: '/icons/route map active.png' },
   { id: 'subscriptions', labelKey: 'subscriptions', iconPath: '', activeIconPath: '' },
 ]
 
@@ -98,7 +99,7 @@ export default function SidebarMobile({ currentPage, onPageChange }: SidebarProp
         </button>
 
         {menuItems.map((item) => (
-          <button key={item.id} onClick={() => onPageChange(item.id as any)} title={t(item.labelKey)}
+          <button key={item.id} onClick={() => { if (item.id === 'localisation') router.push('/localisation'); else onPageChange(item.id as any) }} title={t(item.labelKey)}
             style={{ width: 36, height: 36, borderRadius: 10, border: 'none', cursor: 'pointer', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: currentPage === item.id ? '#B8FF00' : 'transparent', transition: 'background 0.18s ease', flexShrink: 0 }}>
             {item.id === 'subscriptions' ? (
               <SubscriptionIcon active={currentPage === item.id} />
@@ -145,7 +146,7 @@ export default function SidebarMobile({ currentPage, onPageChange }: SidebarProp
                 {t('dashboard').toUpperCase()}
               </span>
               {menuItems.map((item) => (
-                <button key={item.id} onClick={() => handlePageChange(item.id as any)} className={`sidebar-nav-item${currentPage === item.id ? ' active' : ''}`}>
+                <button key={item.id} onClick={() => { if (item.id === 'localisation') { router.push('/localisation'); setDrawerOpen(false) } else handlePageChange(item.id as any) }} className={`sidebar-nav-item${currentPage === item.id ? ' active' : ''}`}>
                   {item.id === 'subscriptions' ? (
                     <SubscriptionIcon active={currentPage === item.id} />
                   ) : (

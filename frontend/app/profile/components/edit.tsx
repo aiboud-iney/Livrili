@@ -227,10 +227,22 @@ export function EditProfilePage({
                     {companyName}
                   </p>
 
-                  {}
                   <input
+                    ref={fileInputRef}
                     type="file"
-                    accept="image/*" />
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }} />
+                  <button
+                    onClick={handleUploadClick}
+                    style={{
+                      background: '#7C3AED', color: '#fff', border: 'none',
+                      borderRadius: '8px', padding: '8px 16px', cursor: 'pointer',
+                      fontFamily: "'Kamerik 105', sans-serif", fontSize: '13px', fontWeight: 600,
+                    }}
+                  >
+                    Change photo
+                  </button>
                 </div>
                 <div className="ep-section-card ep-card ep-card-2" style={{ padding: '20px 24px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

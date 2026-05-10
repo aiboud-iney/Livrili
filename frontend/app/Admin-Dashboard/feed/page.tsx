@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLang } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -74,6 +74,7 @@ export default function AdminFeedPage() {
   const [shipmentFilters, setShipmentFilters] = useState<AdminFilterValues>({ ...defaultFilters, userSearch: "" });
   const [routeFilters, setRouteFilters] = useState<AdminRouteFilterValues>({ ...defaultRouteFilters, userSearch: "" });
   const [isMobile, setIsMobile] = useState(false);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -315,7 +316,14 @@ export default function AdminFeedPage() {
           <div style={{ marginBottom: "16px" }}>
             <UserSearchInput
               value={activeTab === "shipments" ? shipmentFilters.userSearch : routeFilters.userSearch}
-              onChange={(val) => activeTab === "shipments" ? handleShipmentFilterChange("userSearch", val) : handleRouteFilterChange("userSearch", val)}
+              onChange={(val) => {
+                if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+                searchTimerRef.current = setTimeout(() => {
+                  activeTab === "shipments"
+                    ? handleShipmentFilterChange("userSearch", val)
+                    : handleRouteFilterChange("userSearch", val);
+                }, 300);
+              }}
             />
           </div>
 

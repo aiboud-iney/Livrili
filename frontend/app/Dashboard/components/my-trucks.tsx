@@ -135,6 +135,10 @@ export default function MyTrucks() {
       );
 
       if (!res.ok) {
+        if (res.status === 409) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || "Truck is assigned to an active route and cannot be deleted");
+        }
         throw new Error(`Failed to delete truck (${res.status})`);
       }
 

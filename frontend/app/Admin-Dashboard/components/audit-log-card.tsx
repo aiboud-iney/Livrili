@@ -50,7 +50,7 @@ export default function AuditLogCard({ log }: { log: AuditLog }) {
         }}
       >
         <Field label="Audit Num"   value={log.auditNum}    flex="0 0 110px" />
-        <Field label="Admin Name"  value={log.adminName}   flex="1 1 140px" />
+        <Field label="User"  value={log.adminName}   flex="1 1 140px" />
         <Field label="User Account" value={log.userAccount} flex="1 1 140px" />
         <Field label="Timestamp"   value={log.timestamp}   flex="1 1 190px" />
 

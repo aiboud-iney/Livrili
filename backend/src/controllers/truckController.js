@@ -161,6 +161,33 @@ export const deleteTruck = async (req, res) => {
   }
 };
 
+export const addTruckPhotos = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const truckRes = await pool.query("SELECT * FROM trucks WHERE id = $1", [id]);
+    if (truckRes.rows.length === 0) return res.status(404).json({ message: "Truck not found" });
+
+    const truck = truckRes.rows[0];
+
+    if (req.user.user_type !== "admin" && req.user.id !== truck.created_by) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const newUrls = req.files
+      ? req.files.map((f) => `${req.protocol}://${req.get("host")}/uploads/trucks/${f.filename}`)
+      : [];
+
+    const existing = truck.truck_pictures || [];
+    const updated = [...existing, ...newUrls];
+
+    await pool.query("UPDATE trucks SET truck_pictures = $1 WHERE id = $2", [updated, id]);
+    res.json({ truck_pictures: updated });
+  } catch (error) {
+    console.error("Error adding truck photos:", error);
+    res.status(500).json({ message: "Error adding photos" });
+  }
+};
+
 export const getMyTrucksCount = async (req, res) => {
   try {
     const result = await pool.query(

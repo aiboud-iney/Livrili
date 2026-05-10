@@ -146,6 +146,8 @@ export default function LoginPage() {
 
         if (response.status === 401) {
           setErrors({ general: t.errors.submitFailed })
+        } else if (response.status === 403) {
+          setErrors({ general: t.errors.accountNotVerified })
         } else {
           setErrors({ general: data.message || t.errors.submitFailed })
         }

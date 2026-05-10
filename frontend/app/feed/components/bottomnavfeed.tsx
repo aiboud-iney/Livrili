@@ -32,7 +32,7 @@ export default function FeedBottomNav() {
   const NAV = [
     { label: 'HOME',      path: '/feed',      icon: '/icons/home gray phone.png',      iconActive: '/icons/home-active phone.png'      },
     { label: 'SETTINGS',  path: '/support',  icon: '/icons/settings gray phone.png',  iconActive: '/icons/settings-active phone.png'  },
-    { label: 'DASHBOARD', path: '/dashboard', icon: '/icons/dashboard gray phone.png', iconActive: '/icons/dashboard-active phone.png' },
+    { label: 'DASHBOARD', path: '/Dashboard', icon: '/icons/dashboard gray phone.png', iconActive: '/icons/dashboard-active phone.png' },
     { label: 'PROFILE',   path: '/profile',   icon: '/icons/profile gray phone.png',   iconActive: '/icons/profile-active phone.png'   },
   ]
 

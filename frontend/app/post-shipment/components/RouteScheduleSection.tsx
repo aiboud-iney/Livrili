@@ -77,7 +77,7 @@ export function RouteScheduleSection({
           <div className="w-4 h-4 rounded-full border-2 border-[#7C3AED] bg-white mt-6" />
           <div className="w-0.5 flex-1 bg-[#7C3AED] my-1" style={{ minHeight: "80px" }} />
           <div className="mb-3">
-            <img src="/icons/pin.png" alt="pin" style={{ width: "16px", height: "20px", objectFit: "contain" }} />
+            <img src="/icons/Pin.png" alt="pin" style={{ width: "16px", height: "20px", objectFit: "contain" }} />
           </div>
         </div>
 

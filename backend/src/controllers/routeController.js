@@ -387,9 +387,14 @@ export const getRouteShipments = async (req, res) => {
     if (!canAccess) return res.status(403).json({ message: "Forbidden" });
 
     const result = await pool.query(
-      `SELECT s.*, a.status AS assignment_status, a.created_at AS assigned_at
-       FROM assignments a JOIN shipments s ON s.id = a.shipment_id
-       WHERE a.route_id = $1 AND a.shipment_id IS NOT NULL ORDER BY a.id DESC`,
+      `SELECT s.*, a.status AS assignment_status, a.created_at AS assigned_at,
+              u.business_name AS carrier_name
+       FROM assignments a
+       JOIN shipments s ON s.id = a.shipment_id
+       LEFT JOIN trucks t ON t.id = a.truck_id
+       LEFT JOIN users u ON u.id = t.created_by
+       WHERE a.route_id = $1 AND a.shipment_id IS NOT NULL
+       ORDER BY a.id DESC`,
       [id]
     );
     res.status(200).json({ shipments: result.rows });

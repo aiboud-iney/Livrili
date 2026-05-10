@@ -124,6 +124,7 @@ export default function LocalisationShipmentPage() {
                         current_lat: route.current_lat,
                         current_lng: route.current_lng,
                         assignment_status: foundShipment.assignment_status,
+                        carrier_name: foundShipment.carrier_name,
                       });
 
                       setShipment((prev: any) => ({ ...prev, ...foundShipment }));
@@ -336,6 +337,16 @@ export default function LocalisationShipmentPage() {
                 </div>
 
                 {}
+                {routeInfo?.carrier_name && (
+                  <div className="flex items-start gap-3 rounded-lg bg-purple-50 p-3">
+                    <Truck className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-purple-600 uppercase tracking-wide">Transported by</p>
+                      <p className="font-semibold text-gray-900">{routeInfo.carrier_name}</p>
+                    </div>
+                  </div>
+                )}
+
                 {driverCoords && (
                   <div className="flex items-start gap-3 rounded-lg bg-blue-50 p-3">
                     <Truck className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />

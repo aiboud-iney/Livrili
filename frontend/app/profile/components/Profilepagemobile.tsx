@@ -320,7 +320,7 @@ export function ProfilePageMobile({
             )}
           </div>
 
-          <button aria-label="Dashboard" className="mob-nav-item" onClick={() => router.push('/dashboard')}
+          <button aria-label="Dashboard" className="mob-nav-item" onClick={() => router.push('/Dashboard')}
             style={{ color: navColor('/dashboard'), fontWeight: navWeight('/dashboard') }}>
             <img src={ic.navDashboard} alt="" />
             <span>{t('dashboard') || 'Dashboard'}</span>
