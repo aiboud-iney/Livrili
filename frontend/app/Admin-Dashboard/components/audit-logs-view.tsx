@@ -15,21 +15,27 @@ import type { AuditLog } from '../../../lib/Admin_types'
 import { API_BASE_URL as API_BASE, getAuthHeaders } from '@/lib/api'
 
 const exportFilteredLogs = (logs: AuditLog[]) => {
-  const rows = logs.map(log => ({
-    ID:         log.auditNum,
-    Admin:      log.adminName,
-    Account:    log.userAccount,
-    Action:     log.decision,
-    Details:    log.details || '',
-    Timestamp:  log.timestamp,
-  }))
+  const headers = ['ID', 'Admin', 'Account', 'Action', 'Details', 'Timestamp']
+  const rows = logs.map(log => [
+    log.auditNum ?? '',
+    log.adminName ?? '',
+    log.userAccount ?? '',
+    log.decision ?? '',
+    (log.details || '').toString().replace(/"/g, '""'),
+    log.timestamp ?? '',
+  ])
 
-  import('xlsx').then(XLSX => {
-    const wb = XLSX.utils.book_new()
-    const ws = XLSX.utils.json_to_sheet(rows)
-    XLSX.utils.book_append_sheet(wb, ws, 'Audit Logs')
-    XLSX.writeFile(wb, 'audit_logs_export.xlsx')
-  })
+  const csv = [headers, ...rows]
+    .map(row => row.map(cell => `"${cell}"`).join(','))
+    .join('\r\n')
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = 'audit_logs_export.csv'
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 const ITEMS_PER_PAGE = 8

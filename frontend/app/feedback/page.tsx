@@ -34,14 +34,23 @@ export default function FeedbackPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+      const res = await fetch(`${API_BASE}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, message, type: feedbackType }),
+      })
+      if (!res.ok) throw new Error()
       setMessage("")
       setEmail("")
       setFeedbackType("general")
       alert(lang === "en" ? "Thank you for your feedback!" : "Merci pour votre retour!")
-    }, 1000)
+    } catch {
+      alert(lang === "en" ? "Failed to send. Please try again." : "Échec de l'envoi. Veuillez réessayer.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

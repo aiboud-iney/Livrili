@@ -15,6 +15,7 @@ import paymentRoutes      from "./routes/paymentRoutes.js";
 import exportRoutes       from "./routes/exportRoutes.js";
 import auditRoutes        from "./routes/auditRoutes.js";
 import analyticsRoutes    from "./routes/analyticsRoutes.js";
+import feedbackRoutes     from "./routes/feedbackRoutes.js";
 import pool               from "./config/db.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,6 +59,7 @@ app.use("/api/notifications",  notificationRoutes);
 app.use("/api/export",         exportRoutes);
 app.use("/api/audit-logs",     auditRoutes);
 app.use("/api/analytics",      analyticsRoutes);
+app.use("/api/feedback",       feedbackRoutes);
 
 app.get("/dbcheck", async (req, res) => {
   try {

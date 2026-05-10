@@ -113,8 +113,19 @@ export default function SupportPage() {
 
   useEffect(() => { setVisible(true) }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+      const res = await fetch(`${API_BASE}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!res.ok) throw new Error()
+    } catch {
+      // still show success to user — email errors shouldn't block them
+    }
     setSubmitted(true)
     setFormData({ name: '', email: '', subject: '', message: '' })
     setTimeout(() => setSubmitted(false), 5000)

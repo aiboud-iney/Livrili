@@ -69,6 +69,27 @@ export default function ContactUs() {
   const { lang } = useLang()
   const t = translations[lang]
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" })
+  const [isSending, setIsSending] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSending(true)
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+      const res = await fetch(`${API_BASE}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error()
+      setForm({ name: "", email: "", subject: "", message: "" })
+      alert(lang === "en" ? "Message sent! We'll get back to you soon." : "Message envoyé ! Nous vous répondrons bientôt.")
+    } catch {
+      alert(lang === "en" ? "Failed to send. Please try again." : "Échec de l'envoi. Veuillez réessayer.")
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
@@ -101,7 +122,7 @@ export default function ContactUs() {
               <h2 className="text-lg font-bold text-[#111111] mb-4" style={{ fontFamily: "'Kamerik 105', sans-serif" }}>
                 {lang === "en" ? "Send a message" : "Envoyer un message"}
               </h2>
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label className="block text-sm font-medium text-[#333] mb-1">{t.name}</label>
                   <input
@@ -144,10 +165,11 @@ export default function ContactUs() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-xl font-bold text-white bg-[#7C3AED] hover:bg-[#6D28D9] transition-colors"
+                  disabled={isSending}
+                  className="w-full py-3.5 rounded-xl font-bold text-white bg-[#7C3AED] hover:bg-[#6D28D9] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{ fontFamily: "'Kamerik 105', sans-serif" }}
                 >
-                  {t.send}
+                  {isSending ? (lang === "en" ? "Sending..." : "Envoi...") : t.send}
                 </button>
               </form>
             </div>
