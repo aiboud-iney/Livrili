@@ -63,18 +63,15 @@ export const signup = async (req, res) => {
     let emailSent = false;
 
     try {
-      await sendVerificationCode(email, verificationCode, business_name);
+      await sendVerificationCode('livrili.team@gmail.com', verificationCode, business_name);
       emailSent = true;
     } catch (emailError) {
       console.error("Email sending failed:", emailError.message);
     }
 
     res.status(201).json({
-      message: emailSent
-        ? "User registered. Please check your email for the verification code."
-        : "User registered. Use verification code: " + verificationCode,
-      emailSent,
-      verificationCode: emailSent ? null : verificationCode,
+      message: "User registered. Contact Livrili support to get your verification code.",
+      verificationCode,
       user: { email: user.email }
     });
   } catch (error) {
@@ -155,20 +152,15 @@ export const resendVerification = async (req, res) => {
       [newCode, email]
     );
 
-    let emailSent = false;
     try {
-      await sendVerificationCode(email, newCode, userResult.rows[0]?.business_name);
-      emailSent = true;
+      await sendVerificationCode('livrili.team@gmail.com', newCode, userResult.rows[0]?.business_name);
     } catch (emailError) {
       console.error("Resend failed:", emailError.message);
     }
 
     res.status(200).json({
-      message: emailSent
-        ? "Verification code resent successfully"
-        : "Verification code: " + newCode,
-      emailSent,
-      verificationCode: emailSent ? null : newCode,
+      message: "Verification code has been sent to the Livrili team.",
+      verificationCode: newCode,
     });
 
   } catch (error) {
