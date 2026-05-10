@@ -1,473 +1,274 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLang } from "@/contexts/LanguageContext";
 import { useRouter } from "next/navigation";
+import { useLang } from "@/contexts/LanguageContext";
 import { getVisiblePages } from "./pagination-utils";
 import { getTruckTypeLabel, getTruckTypeColor } from "@/app/constants/truck-types";
-import { getShipmentTypeLabel, getShipmentTypeColor } from "@/app/constants/shipment-types";
 
-type ShipmentStatus = "all" | "active" | "completed";
-
-interface Shipment {
+interface Truck {
   id: string;
-  title: string;
-  origin: string;
-  destination: string;
-  from_pickup_date: string;
-  to_pickup_date: string;
-  weight: number;
-  volume: number;
-  status: "posted" | "in_transit" | "completed" | "cancelled";
+  truck_type: string;
+  license_plate: string;
+  max_tonnage: number;
+  max_volume: number;
+  truck_pictures?: string[];
   created_at: string;
-  shipment_pictures?: string[];
-  truck_type?: string | null;
-  shipment_type?: string | null;
-  company?: string;
+  status?: string;
+  year?: number;
+  brand?: string;
+  model?: string;
 }
 
 const ICONS = {
-  calendar: "/icons/ship dashboard calendar.png",
-  weight: "/icons/ship dashboard weight.png",
-  volume: "/icons/ship dashboard volume.png",
+  plus: "/icons/add truck.png",
   edit: "/icons/edit dashboard.png",
   delete: "/icons/delete dashboard.png",
-  arrowRight: "/icons/fleche details.png",
+  externalLink: "/icons/view all photos.png",
+  photo: "/icons/add photos.png",
   chevronLeft: "/icons/go left dashboard.png",
   chevronRight: "/icons/go right dashboard.png",
-  user: "/icons/user.png",
+  calendar: "/icons/route dashboard calendar.png",
+  weight: "/icons/route dashboard weight.png",
+  volume: "/icons/route dashboard volume.png",
 };
 
-export default function MyShipmentsMobile() {
-  const router = useRouter();
+const normalizeTruckPhotoUrl = (rawPath: string): string => {
+  if (!rawPath) return "";
+  if (/^https?:\/\//.test(rawPath)) return rawPath;
+  const normalized = rawPath.replace(/\\/g, "/");
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "";
+  const uploadsIndex = normalized.toLowerCase().lastIndexOf("/uploads/");
+  if (uploadsIndex !== -1) return `${apiBase}${normalized.slice(uploadsIndex)}`;
+  if (normalized.startsWith("uploads/")) return `${apiBase}/${normalized}`;
+  if (normalized.startsWith("/uploads/")) return `${apiBase}${normalized}`;
+  return normalized;
+};
+
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "N/A";
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric", month: "short", day: "numeric",
+  });
+};
+
+export default function MyTrucksMobile() {
   const { t, lang } = useLang();
-  const [statusFilter, setStatusFilter] = useState<ShipmentStatus>("all");
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [updatingShipmentId, setUpdatingShipmentId] = useState<string | null>(null);
-  const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [trucks, setTrucks] = useState<Truck[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchShipments();
-  }, []);
-
-  const fetchShipments = async () => {
+  const fetchTrucks = async () => {
     try {
       setIsLoading(true);
       setError("");
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/shipments/my-shipments`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error(`Failed to fetch shipments (${res.status})`);
-      }
-
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trucks`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+      });
+      if (!res.ok) throw new Error(`Failed to fetch trucks (${res.status})`);
       const data = await res.json();
-      const shipmentsArray = Array.isArray(data) ? data : data?.shipments;
-      setShipments(Array.isArray(shipmentsArray) ? shipmentsArray : []);
+      const trucksArray = Array.isArray(data) ? data : (data?.trucks ?? data?.data?.trucks ?? data?.items);
+      setTrucks(Array.isArray(trucksArray) ? trucksArray : []);
     } catch (err) {
-      console.error("Failed to fetch shipments:", err);
-      setError("Failed to load shipments");
+      console.error("Failed to fetch trucks:", err);
+      setError("Failed to load trucks");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const mapStatus = (status: string): "active" | "completed" => {
-    if (status === "in_transit") return "active";
-    if (status === "completed") return "completed";
-    return "active";
-  };
+  useEffect(() => { fetchTrucks(); }, []);
 
-  const formatDate = (dateString: string): string => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const handleMarkAsCompleted = async (shipmentId: string) => {
-    if (!window.confirm("Mark this shipment as completed?")) return;
-
+  const handleDeleteTruck = async (truckId: string) => {
+    if (!window.confirm("Delete this truck?")) return;
     try {
-      setUpdatingShipmentId(shipmentId);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/shipments/${shipmentId}/status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-          body: JSON.stringify({ status: "completed" }),
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trucks/${truckId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+      });
+      if (!res.ok) {
+        if (res.status === 409) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || "Truck is assigned to an active route and cannot be deleted");
         }
-      );
-
-      if (!res.ok) {
-        throw new Error(`Failed to update shipment (${res.status})`);
+        throw new Error(`Failed to delete truck (${res.status})`);
       }
-
-      setShipments(prev =>
-        prev.map(shipment =>
-          shipment.id === shipmentId ? { ...shipment, status: "completed" } : shipment
-        )
-      );
-      alert("Shipment marked as completed!");
+      setTrucks((prev) => prev.filter((truck) => truck.id !== truckId));
     } catch (err) {
-      console.error("Failed to update shipment:", err);
-      setError("Failed to update shipment status");
-    } finally {
-      setUpdatingShipmentId(null);
+      console.error("Failed to delete truck:", err);
+      setError("Failed to delete truck");
     }
   };
 
-  const handleReactivate = async (shipmentId: string) => {
-    if (!window.confirm("Reactivate this shipment?")) return;
-
-    try {
-      setUpdatingShipmentId(shipmentId);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/shipments/${shipmentId}/status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-          body: JSON.stringify({ status: "in_transit" }),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error(`Failed to reactivate (${res.status})`);
-      }
-
-      setShipments(prev =>
-        prev.map(shipment =>
-          shipment.id === shipmentId ? { ...shipment, status: "in_transit" } : shipment
-        )
-      );
-      alert("Shipment reactivated!");
-    } catch (err) {
-      console.error("Failed to reactivate:", err);
-      setError("Failed to reactivate shipment");
-    } finally {
-      setUpdatingShipmentId(null);
-    }
-  };
-
-  const handleDeleteShipment = async (shipmentId: string) => {
-    if (!window.confirm("Delete this shipment? This cannot be undone.")) return;
-
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/shipments/${shipmentId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error(`Failed to delete shipment (${res.status})`);
-      }
-
-      setShipments((prev) =>
-        prev.filter((shipment) => shipment.id !== shipmentId),
-      );
-      alert("Shipment deleted!");
-    } catch (err) {
-      console.error("Failed to delete shipment:", err);
-      setError("Failed to delete shipment");
-    }
-  };
-
-  const filteredShipments =
-    statusFilter === "all"
-      ? shipments
-      : shipments.filter((s) => mapStatus(s.status) === statusFilter);
-
-  const totalPages = Math.ceil(filteredShipments.length / 3);
-  const displayedShipments = filteredShipments.slice(
-    (currentPage - 1) * 3,
-    currentPage * 3,
-  );
+  const totalPages = Math.ceil(trucks.length / 6);
+  const displayedTrucks = trucks.slice((currentPage - 1) * 6, currentPage * 6);
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   useEffect(() => {
-    if (totalPages > 0 && currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
+    if (totalPages > 0 && currentPage > totalPages) setCurrentPage(totalPages);
   }, [currentPage, totalPages]);
 
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-foreground">My Shipments</h1>
+        <h1 className="text-xl font-bold text-foreground">My Trucks</h1>
+        <button
+          onClick={() => router.push("/add-truck")}
+          className="bg-[#B8FF00] hover:bg-[#a8ee00] text-[#1a1a1a] font-semibold rounded-full px-4 py-1.5 transition-colors flex items-center gap-1.5 text-sm cursor-pointer"
+        >
+          <img src={ICONS.plus} alt="Add" style={{ width: "14px", height: "14px", objectFit: "contain" }} />
+          Add Truck
+        </button>
       </div>
 
-      {}
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-        {["all", "active", "completed"].map((filter) => (
-          <button
-            key={filter}
-            onClick={() => {
-              setStatusFilter(filter as ShipmentStatus);
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-1.5 rounded-full font-medium capitalize text-sm transition-all whitespace-nowrap cursor-pointer ${
-              statusFilter === filter
-                ? filter === "all"
-                  ? "bg-[#1a1a1a] text-white"
-                  : filter === "active"
-                    ? "bg-[#7E52FF] text-white font-bold"
-                    : "bg-[#f0f0f0] text-[#666] font-bold"
-                : "bg-white text-[#1a1a1a] border border-[#e0e0e0] hover:bg-[#f5f5f5]"
-            }`}
-          >
-            {filter === "all"
-              ? "All"
-              : filter.charAt(0).toUpperCase() + filter.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {}
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#7E52FF] mb-2"></div>
-            <p className="text-[#666] text-sm">Loading shipments...</p>
+            <p className="text-[#666] text-sm">Loading trucks...</p>
           </div>
         </div>
       )}
 
-      {}
       {error && !isLoading && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {error}
-          <button onClick={fetchShipments} className="ml-3 text-red-700 underline">Retry</button>
+          <button onClick={fetchTrucks} className="ml-3 text-red-700 underline cursor-pointer">Retry</button>
         </div>
       )}
 
-      {}
-      {!isLoading && filteredShipments.length === 0 && !error && (
+      {!isLoading && displayedTrucks.length === 0 && !error && (
         <div className="text-center py-12">
-          <p className="text-[#666] text-base">
-            {statusFilter === "all" ? "No shipments found" : `No ${statusFilter} shipments`}
-          </p>
+          <p className="text-[#666] text-base">No trucks found</p>
+          <button
+            onClick={() => router.push("/add-truck")}
+            className="mt-4 bg-[#7E52FF] text-white font-semibold rounded-full px-6 py-2 text-sm transition-colors hover:bg-[#6d41ff] cursor-pointer"
+          >
+            Add Your First Truck
+          </button>
         </div>
       )}
 
-      {}
-      {!isLoading && displayedShipments.length > 0 && (
-        <div className="space-y-3 mb-6">
-          {displayedShipments.map((shipment) => (
-            <div
-              key={shipment.id}
-              className={`border-2 rounded-2xl bg-white p-4 transition-all ${
-                mapStatus(shipment.status) === "active"
-                  ? "border-[#7E52FF]"
-                  : "border-[#e0e0e0] opacity-75"
-              }`}
-            >
-              {}
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className={`inline-block px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
-                    mapStatus(shipment.status) === "active"
-                      ? "bg-[#7E52FF] text-white"
-                      : "bg-[#f0f0f0] text-[#666]"
-                  }`}
-                >
-                  {mapStatus(shipment.status) === "active" ? "ACTIVE" : "COMPLETED"}
-                </span>
-                <span className="text-xs text-[#7E52FF] font-medium">
-                  {formatDate(shipment.created_at)}
-                </span>
-              </div>
+      {!isLoading && displayedTrucks.length > 0 && (
+        <>
+          <div className="space-y-3 mb-6">
+            {displayedTrucks.map((truck) => (
+              <div key={truck.id} className="border-2 border-[#e0e0e0] rounded-2xl p-4 bg-white">
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    {truck.truck_type ? (
+                      <span style={{
+                        display: "inline-block",
+                        backgroundColor: getTruckTypeColor(truck.truck_type).bg,
+                        color: getTruckTypeColor(truck.truck_type).text,
+                        fontSize: "11px", fontWeight: 700, padding: "3px 10px",
+                        borderRadius: "6px",
+                        border: `1px solid ${getTruckTypeColor(truck.truck_type).border || "transparent"}`,
+                        marginBottom: "6px",
+                      }}>
+                        {getTruckTypeLabel(truck.truck_type, lang)}
+                      </span>
+                    ) : (
+                      <span className="text-sm font-bold text-[#1a1a1a]">Unknown Truck</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 ml-2">
+                    <button
+                      onClick={() => router.push(`/edit-truck?id=${truck.id}`)}
+                      className="p-1.5 hover:bg-[#f0f0f0] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <img src={ICONS.edit} alt="Edit" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTruck(truck.id)}
+                      className="p-1.5 hover:bg-[#fef2f2] rounded-lg transition-colors cursor-pointer"
+                    >
+                      <img src={ICONS.delete} alt="Delete" style={{ width: "18px", height: "18px", objectFit: "contain", filter: "brightness(0) saturate(100%) invert(40%) sepia(97%) saturate(2635%) hue-rotate(333deg) brightness(96%) contrast(96%)" }} />
+                    </button>
+                  </div>
+                </div>
 
-              {}
-              {shipment.company && (
                 <div className="flex items-center gap-2 mb-2">
-                  <img src={ICONS.user} alt="Company" className="w-3 h-3 opacity-60" />
-                  <span className="text-xs text-[#666] font-medium">{shipment.company}</span>
+                  <span className="inline-block bg-[#7E52FF] text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">{truck.license_plate}</span>
+                  <span className="text-[10px] text-[#999]">{formatDate(truck.created_at)}</span>
                 </div>
-              )}
 
-              {}
-              <h3 className="text-base font-bold text-[#1a1a1a] mb-3">
-                {shipment.title || "Untitled Shipment"}
-              </h3>
-
-              {}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex flex-col items-center gap-0.5">
-                  <div className="w-2 h-2 rounded-full bg-[#B8FF00]" />
-                  <div className="w-px h-4 bg-gray-300" />
-                  <div className="w-2 h-2 rounded-full bg-[#7E52FF]" />
+                <div className="flex items-start gap-3 mb-2">
+                  <div className="w-[80px] h-[60px] bg-[#f5f5f5] rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden border border-dashed border-[#d0d0d0]">
+                    {truck.truck_pictures && truck.truck_pictures.length > 0 ? (
+                      <img src={normalizeTruckPhotoUrl(truck.truck_pictures[0])} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[#999] text-[10px]">No photo</span>
+                    )}
+                  </div>
+                  <div className="flex-1 grid grid-cols-2 gap-1.5">
+                    <div>
+                      <p className="text-[9px] text-[#999] font-semibold">Max Tonnage</p>
+                      <p className="text-xs font-bold text-[#1a1a1a]">{truck.max_tonnage}t</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] text-[#999] font-semibold">Max Volume</p>
+                      <p className="text-xs font-bold text-[#1a1a1a]">{truck.max_volume}m³</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-semibold text-[#1a1a1a]">{shipment.origin}</span>
-                  <span className="text-sm font-semibold text-[#1a1a1a]">{shipment.destination}</span>
-                </div>
-              </div>
 
-              {}
-              <div className="flex items-center gap-1.5 mb-2">
-                <img src={ICONS.calendar} alt="Date" className="w-3.5 h-3.5" />
-                <span className="text-xs font-medium text-[#1a1a1a]">
-                  {formatDate(shipment.from_pickup_date)} - {formatDate(shipment.to_pickup_date)}
-                </span>
-              </div>
-
-              {}
-              <div className="flex items-center gap-3 mb-2">
-                <div className="flex items-center gap-1">
-                  <img src={ICONS.weight} alt="Weight" className="w-3.5 h-3.5" />
-                  <span className="text-xs font-medium">{shipment.weight} tons</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <img src={ICONS.volume} alt="Volume" className="w-3.5 h-3.5" />
-                  <span className="text-xs font-medium">{shipment.volume} m³</span>
-                </div>
-              </div>
-
-              {}
-              <div className="flex items-center gap-2 mb-3 flex-wrap">
-                {shipment.shipment_type && (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      backgroundColor: getShipmentTypeColor(shipment.shipment_type).bg,
-                      color: getShipmentTypeColor(shipment.shipment_type).text,
-                      fontSize: "9px",
-                      fontWeight: 700,
-                      padding: "2px 5px",
-                      borderRadius: "4px",
-                      border: `1px solid ${getShipmentTypeColor(shipment.shipment_type).border || "transparent"}`,
-                    }}
-                  >
-                    {getShipmentTypeLabel(shipment.shipment_type, lang)}
-                  </span>
+                {(truck.year || truck.brand || truck.model) && (
+                  <div className="flex items-center gap-2 text-[11px] text-[#666] pt-2 border-t border-[#f0f0f0]">
+                    {truck.year && <span>{truck.year}</span>}
+                    {truck.brand && <span>{truck.brand}</span>}
+                    {truck.model && <span>{truck.model}</span>}
+                  </div>
                 )}
-                {shipment.truck_type && (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      backgroundColor: getTruckTypeColor(shipment.truck_type).bg,
-                      color: getTruckTypeColor(shipment.truck_type).text,
-                      fontSize: "9px",
-                      fontWeight: 700,
-                      padding: "2px 5px",
-                      borderRadius: "4px",
-                      border: `1px solid ${getTruckTypeColor(shipment.truck_type).border || "transparent"}`,
-                    }}
-                  >
-                    {getTruckTypeLabel(shipment.truck_type, lang)}
-                  </span>
-                )}
-              </div>
 
-              {}
-              <div className="flex items-center justify-between pt-3 border-t border-[#e0e0e0]">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => router.push(`/edit-shipment?id=${shipment.id}`)}
-                    className="flex items-center gap-1.5 text-[#666] text-xs font-semibold"
-                  >
-                    <img src={ICONS.edit} alt="Edit" className="w-4 h-4" />
-                    EDIT
-                  </button>
-                  <button
-                    onClick={() => handleDeleteShipment(shipment.id)}
-                    className="flex items-center gap-1.5 text-red-500 text-xs font-semibold"
-                  >
-                    <img src={ICONS.delete} alt="Delete" className="w-4 h-4" />
-                    DEL
-                  </button>
-                  <button
-                    onClick={() => router.push(`/shipment-listing/${shipment.id}`)}
-                    className="flex items-center gap-1 text-[#7E52FF] text-xs font-semibold"
-                  >
-                    DETAILS
-                    <img src={ICONS.arrowRight} alt="Details" className="w-3 h-3" />
+                <div className="flex items-center justify-between pt-2 border-t border-[#f0f0f0] mt-2">
+                  {truck.truck_pictures && truck.truck_pictures.length > 0 ? (
+                    <button onClick={() => router.push(`/truck-photos?id=${truck.id}&action=view`)}
+                      className="text-[#7E52FF] text-[10px] font-semibold cursor-pointer">
+                      Photos ({truck.truck_pictures.length})
+                    </button>
+                  ) : (
+                    <button onClick={() => router.push(`/truck-photos?id=${truck.id}&action=add`)}
+                      className="text-[#7E52FF] text-[10px] font-semibold cursor-pointer">
+                      Add Photo
+                    </button>
+                  )}
+                  <button onClick={() => router.push(`/edit-truck?id=${truck.id}`)}
+                    className="text-[#7E52FF] text-[10px] font-semibold cursor-pointer">
+                    Details →
                   </button>
                 </div>
-                {mapStatus(shipment.status) === "active" ? (
-                  <button
-                    onClick={() => handleMarkAsCompleted(shipment.id)}
-                    disabled={updatingShipmentId === shipment.id}
-                    className={`bg-[#B8FF00] text-[#1a1a1a] font-bold rounded-full px-3 py-1.5 text-[10px] transition-all cursor-pointer ${
-                      updatingShipmentId === shipment.id ? "opacity-50" : ""
-                    }`}
-                  >
-                    {updatingShipmentId === shipment.id ? "..." : "COMPLETE"}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleReactivate(shipment.id)}
-                    disabled={updatingShipmentId === shipment.id}
-                    className={`bg-[#7E52FF] text-white font-bold rounded-full px-3 py-1.5 text-[10px] transition-all cursor-pointer ${
-                      updatingShipmentId === shipment.id ? "opacity-50" : ""
-                    }`}
-                  >
-                    {updatingShipmentId === shipment.id ? "..." : "REACTIVATE"}
-                  </button>
-                )}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
 
-      {}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <button
-            onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-[#e0e0e0] cursor-pointer"
-            disabled={currentPage === 1}
-          >
-            <img src={ICONS.chevronLeft} alt="Previous" className="w-2.5 h-2.5" />
-          </button>
-          {visiblePages.map((page, index) =>
-            page === "ellipsis" ? (
-              <span key={`ellipsis-${index}`} className="px-1 text-xs">...</span>
-            ) : (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-8 h-8 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
-                  page === currentPage
-                    ? "bg-[#7E52FF] text-white"
-                    : "bg-white text-foreground border border-[#e0e0e0]"
-                }`}
-              >
-                {page}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2">
+              <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#e0e0e0] cursor-pointer"
+                disabled={currentPage === 1}>
+                <img src={ICONS.chevronLeft} alt="Prev" className="w-2.5 h-2.5" />
               </button>
-            ),
+              {visiblePages.map((page, index) =>
+                page === "ellipsis" ? (
+                  <span key={`e-${index}`} className="px-1 text-xs">...</span>
+                ) : (
+                  <button key={page} onClick={() => setCurrentPage(page)}
+                    className={`w-8 h-8 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
+                      page === currentPage ? "bg-[#7E52FF] text-white" : "bg-white text-foreground border border-[#e0e0e0]"
+                    }`}>{page}</button>
+                ),
+              )}
+              <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#e0e0e0] cursor-pointer"
+                disabled={currentPage === totalPages}>
+                <img src={ICONS.chevronRight} alt="Next" className="w-2.5 h-2.5" />
+              </button>
+            </div>
           )}
-          <button
-            onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
-            className="w-8 h-8 flex items-center justify-center rounded-full border border-[#e0e0e0] cursor-pointer"
-            disabled={currentPage === totalPages}
-          >
-            <img src={ICONS.chevronRight} alt="Next" className="w-2.5 h-2.5" />
-          </button>
-        </div>
+        </>
       )}
     </div>
   );

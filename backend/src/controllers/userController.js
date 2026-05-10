@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
 import { createAuditLog } from './auditLogController.js';
+import { sendWelcomeEmail } from '../utils/mailer.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
@@ -407,6 +408,12 @@ const approveUserVerification = async (req, res) => {
        VALUES ($1, 'Account Verified', 'Your business documents have been approved. You now have full access to Livrili.', 'success')`,
       [id]
     ).catch(() => {});
+
+    try {
+      await sendWelcomeEmail(rows[0].email, rows[0].business_name);
+    } catch (emailErr) {
+      console.error("Welcome email failed:", emailErr.message);
+    }
 
     createAuditLog(req.user?.id, 'VERIFIED', 'user', id, {
       userAccount: rows[0].business_name || rows[0].email,

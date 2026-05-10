@@ -19,7 +19,7 @@ import { ShipmentCard } from "@/app/feed/components/ShipmentCard";
 import { RouteCard } from "@/app/feed/components/RouteCard";
 import { Pagination } from "@/app/feed/components/Pagination";
 import { FeedToggle } from "@/app/feed/components/FeedToggle";
-import { FeedBottomNav } from "./components/bottomnavfeed";
+import FeedBottomNav from "./components/bottomnavfeed";
 
 interface AdminFilterValues extends FilterValues {
   userSearch: string;

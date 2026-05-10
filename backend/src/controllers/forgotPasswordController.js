@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import sendEmail from "../utils/mailer.js";
+import { sendPasswordResetEmail } from "../utils/mailer.js";
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -31,10 +31,8 @@ export const forgotPassword = async (req, res) => {
     );
 
     const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`;
-    const subject  = "Reset your Livrili password";
-    const text     = `Hello ${user.business_name},\n\nClick the link below to reset your password (valid for 1 hour):\n\n${resetUrl}\n\nIf you did not request a password reset, please ignore this email.`;
 
-    await sendEmail(email, subject, text);
+    await sendPasswordResetEmail(email, user.business_name, resetUrl);
 
     res.status(200).json({ message: "If an account exists with that email, you will receive a password reset link." });
   } catch (error) {

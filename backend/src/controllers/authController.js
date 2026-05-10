@@ -17,11 +17,23 @@ export const signup = async (req, res) => {
   try {
 
     const existingUser = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
+      "SELECT id, verified FROM users WHERE email = $1",
       [email.toLowerCase()]
     );
 
     if (existingUser.rows.length > 0) {
+      const user = existingUser.rows[0];
+      if (!user.verified) {
+        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+        await pool.query(
+          "UPDATE users SET verification_code = $1 WHERE email = $2",
+          [newCode, email.toLowerCase()]
+        );
+        await sendOtpEmail(email, newCode);
+        return res.status(200).json({
+          message: "Account already exists. New OTP sent to your email."
+        });
+      }
       return res.status(409).json({ message: "Email already registered" });
     }
 

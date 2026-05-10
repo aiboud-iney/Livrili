@@ -11,12 +11,10 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp-relay.brevo.com',
-  port: 587,
-  secure: false,
+  service: 'gmail',
   auth: {
-    user: process.env.BREVO_SMTP_USER,
-    pass: process.env.BREVO_SMTP_PASS,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASS,
   },
 });
 
@@ -30,8 +28,8 @@ function logEmail(to, subject, reason) {
 }
 
 const sendEmail = async (to, subject, html) => {
-  if (!process.env.BREVO_SMTP_USER || !process.env.BREVO_SMTP_PASS) {
-    logEmail(to, subject, 'Brevo SMTP not configured');
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASS) {
+    logEmail(to, subject, 'Gmail SMTP not configured');
     return false;
   }
 

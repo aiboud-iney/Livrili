@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FROM = '"SmartFarming" <livrili.team@gmail.com>';
+const FROM = '"Livrili" <livrili.team@gmail.com>';
 
 export async function sendOtpEmail(userEmail, otp) {
   if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASS) {
@@ -32,7 +32,7 @@ export async function sendOtpEmail(userEmail, otp) {
         <table role="presentation" width="100%" style="max-width:480px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
           <tr>
             <td style="background-color:#16a34a;padding:32px 24px;text-align:center;">
-              <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">SmartFarming</h1>
+              <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">Livrili</h1>
               <p style="margin:4px 0 0;font-size:14px;color:rgba(255,255,255,0.8);">Verify your account</p>
             </td>
           </tr>
@@ -40,7 +40,7 @@ export async function sendOtpEmail(userEmail, otp) {
             <td style="padding:32px 24px;">
               <p style="margin:0 0 16px;font-size:16px;color:#374151;">Hello,</p>
               <p style="margin:0 0 20px;font-size:15px;color:#6b7280;line-height:1.6;">
-                Use the code below to verify your SmartFarming account. This code expires in <strong>10 minutes</strong>.
+                Use the code below to verify your Livrili account. This code expires in <strong>10 minutes</strong>.
               </p>
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
@@ -54,12 +54,12 @@ export async function sendOtpEmail(userEmail, otp) {
                 <tr>
                   <td style="background-color:#fef2f2;border-left:4px solid #ef4444;border-radius:6px;padding:14px 16px;">
                     <p style="margin:0;font-size:13px;color:#991b1b;line-height:1.5;">
-                      <strong>Security tip:</strong> Never share this code with anyone. SmartFarming will never ask for your verification code.
+                      <strong>Security tip:</strong> Never share this code with anyone. Livrili will never ask for your verification code.
                     </p>
                   </td>
                 </tr>
               </table>
-              <p style="margin:20px 0 0;font-size:14px;color:#9ca3af;">If you didn't create a SmartFarming account, please ignore this email.</p>
+              <p style="margin:20px 0 0;font-size:14px;color:#9ca3af;">If you didn't create a Livrili account, please ignore this email.</p>
             </td>
           </tr>
           <tr>
@@ -68,7 +68,7 @@ export async function sendOtpEmail(userEmail, otp) {
                 Need help? Contact us at
                 <a href="mailto:livrili.team@gmail.com" style="color:#16a34a;text-decoration:underline;">livrili.team@gmail.com</a>
               </p>
-              <p style="margin:0;font-size:12px;color:#d1d5db;">&copy; ${new Date().getFullYear()} SmartFarming. All rights reserved.</p>
+              <p style="margin:0;font-size:12px;color:#d1d5db;">&copy; ${new Date().getFullYear()} Livrili. All rights reserved.</p>
             </td>
           </tr>
         </table>
@@ -82,7 +82,7 @@ export async function sendOtpEmail(userEmail, otp) {
     const info = await transporter.sendMail({
       from: FROM,
       to: userEmail,
-      subject: 'Verify your SmartFarming Account',
+      subject: 'Verify your Livrili Account',
       html,
     });
     console.log('OTP email sent:', info.messageId);
