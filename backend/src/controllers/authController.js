@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
-import { sendOtpEmail } from "../utils/sendOtp.js";
+import { sendOtpEmail } from "../utils/mailer.js";
 
 export const signup = async (req, res) => {
   const {

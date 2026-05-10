@@ -1,6 +1,5 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
-import dns from 'dns';
 
 import { otpTemplate } from '../views/emails/otp.js';
 import { welcomeTemplate } from '../views/emails/welcome.js';
@@ -11,29 +10,11 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 
 dotenv.config();
 
-const GMAIL_HOST = (() => {
-  try {
-    return dns.lookupSync('smtp.gmail.com', { family: 4 }).address;
-  } catch {
-    return 'smtp.gmail.com';
-  }
-})();
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
-const transporter = nodemailer.createTransport({
-  host: GMAIL_HOST,
-  port: 587,
-  secure: false,
-  requireTLS: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASS,
-  },
-  connectionTimeout: 10000,
-  socketTimeout: 10000,
-  tls: { servername: 'smtp.gmail.com' },
-});
-
-const FROM = '"Livrili" <livrili.team@gmail.com>';
+const FROM = process.env.SENDGRID_FROM || 'livrili.team@gmail.com';
 
 function logEmail(to, subject, reason) {
   console.log(`\n========== EMAIL (${reason}) ==========`);
@@ -43,23 +24,27 @@ function logEmail(to, subject, reason) {
 }
 
 const sendEmail = async (to, subject, html) => {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASS) {
-    logEmail(to, subject, 'Gmail SMTP not configured');
+  if (!process.env.SENDGRID_API_KEY) {
+    logEmail(to, subject, 'SendGrid not configured');
     return false;
   }
 
   try {
-    const info = await transporter.sendMail({
-      from: FROM,
+    const msg = {
       to,
+      from: FROM,
       subject,
       html,
-    });
-    console.log('Email sent:', info.messageId);
+    };
+    const [response] = await sgMail.send(msg);
+    console.log('Email sent via SendGrid:', response.statusCode);
     return true;
   } catch (error) {
     console.error('Error sending email:', error.message);
-    logEmail(to, subject, 'send failed – fallback');
+    if (error.response) {
+      console.error('SendGrid error body:', error.response.body);
+    }
+    logEmail(to, subject, 'send failed');
     return false;
   }
 };
