@@ -486,7 +486,7 @@ export default function PaymentPage() {
                       <p className="text-xs" style={{ color: "#7C3AED" }}>{t.uploadReceiptSub}</p>
                     </>
                   )}
-                  <input ref={fileInputRef} type="file" accept="image/*,.pdf" onChange={handleFileSelect} style={{ display: 'none' }} />
+                  <input title="buttt" ref={fileInputRef} type="file" accept="image/*,.pdf" onChange={handleFileSelect} style={{ display: 'none' }} />
                 </div>
               </div>
             </div>

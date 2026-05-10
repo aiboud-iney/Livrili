@@ -1,4 +1,3 @@
-import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 
 import { otpTemplate } from '../views/emails/otp.js';
@@ -10,79 +9,75 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 
 dotenv.config();
 
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
-const FROM = process.env.SENDGRID_FROM || 'livrili.team@gmail.com';
-
-function logEmail(to, subject, reason) {
-  console.log(`\n========== EMAIL (${reason}) ==========`);
-  console.log(`To:      ${to}`);
-  console.log(`Subject: ${subject}`);
-  console.log('='.repeat(40) + '\n');
-}
+const FROM_EMAIL = 'livrili.team@gmail.com';
+const FROM_NAME = 'Livrili';
 
 const sendEmail = async (to, subject, html) => {
-  if (!process.env.SENDGRID_API_KEY) {
-    logEmail(to, subject, 'SendGrid not configured');
-    return false;
+  const apiKey = process.env.BREVO_API_KEY;
+
+  if (!apiKey) {
+    console.warn(`[EMAIL SKIPPED - no BREVO_API_KEY] To: ${to} | Subject: ${subject}`);
+    throw new Error('Email service not configured (BREVO_API_KEY missing)');
   }
 
-  try {
-    const msg = {
-      to,
-      from: FROM,
+  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: FROM_NAME, email: FROM_EMAIL },
+      to: [{ email: to }],
       subject,
-      html,
-    };
-    const [response] = await sgMail.send(msg);
-    console.log('Email sent via SendGrid:', response.statusCode);
-    return true;
-  } catch (error) {
-    console.error('Error sending email:', error.message);
-    if (error.response) {
-      console.error('SendGrid error body:', error.response.body);
-    }
-    logEmail(to, subject, 'send failed');
-    return false;
+      htmlContent: html,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    console.error(`Brevo error ${response.status}:`, body);
+    throw new Error(`Failed to send email (Brevo ${response.status})`);
   }
+
+  console.log(`Email sent via Brevo to ${to} [${response.status}]`);
 };
 
 export const sendOtpEmail = async (userEmail, otp) => {
   const subject = 'Verify your Livrili Account';
   const html = otpTemplate({ name: '', code: otp });
-  return sendEmail(userEmail, subject, html);
+  await sendEmail(userEmail, subject, html);
 };
 
 export const sendWelcomeEmail = async (to, name) => {
   const subject = 'Welcome to Livrili!';
   const html = welcomeTemplate({ name });
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
 export const sendPasswordResetEmail = async (to, name, resetLink) => {
   const subject = 'Reset your Livrili Password';
   const html = passwordResetTemplate({ name, resetLink });
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
 export const sendContactUsEmail = async (to, name, message) => {
   const subject = 'We received your message';
   const html = contactUsTemplate({ name, message });
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
 export const sendSubscriptionAcceptedEmail = async (to, { name, planName, amount, startDate, endDate, billingCycle, features }) => {
   const subject = 'Subscription Approved!';
   const html = subscriptionAcceptedTemplate({ name, planName, amount, startDate, endDate, billingCycle, features });
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
 export const sendSubscriptionRejectedEmail = async (to, { name, planName, reason }) => {
   const subject = 'Update on your Subscription Request';
   const html = subscriptionRejectedTemplate({ name, planName, reason });
-  return sendEmail(to, subject, html);
+  await sendEmail(to, subject, html);
 };
 
 export default sendEmail;
