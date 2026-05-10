@@ -14,6 +14,24 @@ import { Pagination } from './pagination'
 import type { AuditLog } from '../../../lib/Admin_types'
 import { API_BASE_URL as API_BASE, getAuthHeaders } from '@/lib/api'
 
+const exportFilteredLogs = (logs: AuditLog[]) => {
+  const rows = logs.map(log => ({
+    ID:         log.auditNum,
+    Admin:      log.adminName,
+    Account:    log.userAccount,
+    Action:     log.decision,
+    Details:    log.details || '',
+    Timestamp:  log.timestamp,
+  }))
+
+  import('xlsx').then(XLSX => {
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(rows)
+    XLSX.utils.book_append_sheet(wb, ws, 'Audit Logs')
+    XLSX.writeFile(wb, 'audit_logs_export.xlsx')
+  })
+}
+
 const ITEMS_PER_PAGE = 8
 const ADMIN_ACTIONS = ['All', 'VERIFIED', 'DELETED', 'BLOCKED POST']
 
@@ -113,6 +131,7 @@ export default function AuditLogsView() {
           <Button
             className="h-10 px-5 gap-2 text-[13px] font-bold rounded-xl border-0"
             style={{ backgroundColor: '#111827', color: '#AAFF00' }}
+            onClick={() => exportFilteredLogs(filtered)}
           >
             <Upload size={14} strokeWidth={2.5} />
             Export Logs

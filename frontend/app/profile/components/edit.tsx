@@ -94,7 +94,7 @@ export function EditProfilePage({
     bio: bioContent,
   });
 
-  const filledCount = Object.values(form).filter((v) => v.trim() !== '').length;
+  const filledCount = Object.values(form).filter((v) => (v ?? '').trim() !== '').length;
   const completionPct = Math.round((filledCount / 8) * 100);
 
   const handleChange = (field: keyof EditProfileData) => (

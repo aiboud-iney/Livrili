@@ -2,14 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react'
 
-type ExportType = 'shipments' | 'routes' | 'trucks' | 'subscriptions' | 'audit-logs'
+type ExportType = 'shipments' | 'routes' | 'trucks' | 'subscriptions' | 'audit-logs' | 'users'
 
 const EXPORT_OPTIONS: { label: string; value: ExportType; filename: string }[] = [
-  { label: 'Shipments', value: 'shipments', filename: 'shipments_export.xlsx' },
-  { label: 'Routes',    value: 'routes',    filename: 'routes_export.xlsx'    },
-  { label: 'Trucks',   value: 'trucks',    filename: 'trucks_export.xlsx'    },
+  { label: 'Shipments',     value: 'shipments',     filename: 'shipments_export.xlsx'     },
+  { label: 'Routes',        value: 'routes',        filename: 'routes_export.xlsx'        },
+  { label: 'Trucks',        value: 'trucks',        filename: 'trucks_export.xlsx'        },
   { label: 'Subscriptions', value: 'subscriptions', filename: 'subscriptions_export.xlsx' },
-  { label: 'Audit Logs', value: 'audit-logs', filename: 'audit_logs_export.xlsx' },
+  { label: 'Audit Logs',    value: 'audit-logs',    filename: 'audit_logs_export.xlsx'    },
+  { label: 'Users',         value: 'users',         filename: 'users_export.xlsx'         },
 ]
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'

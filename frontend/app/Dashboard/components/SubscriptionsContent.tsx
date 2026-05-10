@@ -709,7 +709,7 @@ export default function SubscriptionsContent() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
-                        ⏳ Pending Approval
+                        Pending Approval
                       </span>
                       {payment.receipt && (
                         <a
