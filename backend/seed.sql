@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 TRUNCATE audit_logs, notifications, user_subscriptions, assignments,
-         shipments, routes, trucks, users RESTART IDENTITY CASCADE;
+         shipments, routes, trucks, users, plans RESTART IDENTITY CASCADE;
 
 INSERT INTO plans (id, name, description, price, duration_days, is_premium, created_at)
 VALUES
