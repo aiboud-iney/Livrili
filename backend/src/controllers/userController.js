@@ -68,10 +68,7 @@ const getAllUsers = async (req, res) => {
         u.user_type,
         u.verified,
         u.verification,
-        CASE
-          WHEN u.verification = true THEN 'verified'
-          ELSE 'not_requested'
-        END as verification_status,
+        COALESCE(u.verification_status, 'not_requested') as verification_status,
         u.headquarters_address as wilaya,
         u.trade_register,
         u.tin_nif as nif,
