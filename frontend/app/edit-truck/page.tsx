@@ -181,30 +181,6 @@ function EditTruckPageContent() {
     }
   };
 
-    try {
-      const token = localStorage.getItem("authToken");
-      const res = await fetch(`${apiUrl}/trucks/${truckId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        router.push("/Dashboard");
-      } else {
-        const data = await res.json();
-        setSubmitError(data.message || t.errors.submitFailed);
-      }
-    } catch (error) {
-      setSubmitError(t.errors.submitFailed);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (isLoadingTruck) {
     return (
       <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
