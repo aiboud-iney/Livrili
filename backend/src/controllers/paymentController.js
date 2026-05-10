@@ -22,7 +22,12 @@ const submitPayment = async (req, res) => {
   try {
 
     const existing = await pool.query(
-      "SELECT id FROM user_subscriptions WHERE user_id = $1 AND status IN ('pending','active') LIMIT 1",
+      `SELECT us.id FROM user_subscriptions us
+       JOIN plans p ON us.plan_id = p.id
+       WHERE us.user_id = $1
+         AND us.status IN ('pending', 'active')
+         AND (p.is_premium = true OR us.status = 'pending')
+       LIMIT 1`,
       [resolvedUserId]
     );
     if (existing.rows.length > 0) {
