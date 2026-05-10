@@ -184,7 +184,7 @@ export const deleteShipment = async (req, res) => {
       "SELECT id FROM assignments WHERE shipment_id = $1 AND status NOT IN ('cancelled','delivered') LIMIT 1",
       [id]
     );
-    if (activeAssignment.rows.length > 0) {
+    if (req.user.user_type !== "admin" && activeAssignment.rows.length > 0) {
         return res.status(409).json({ message: "Cannot delete a shipment that is currently assigned to a route" });
     }
     await pool.query("DELETE FROM shipments WHERE id = $1", [id]);

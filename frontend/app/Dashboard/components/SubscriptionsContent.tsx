@@ -665,7 +665,7 @@ export default function SubscriptionsContent() {
 
                 <div className="space-y-2">
                   <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Billing Support</p>
-                  <p className="text-gray-900 font-semibold">payment@livrili.dz</p>
+                  <p className="text-gray-900 font-semibold">livrili.team@gmail.com</p>
                 </div>
               </div>
 

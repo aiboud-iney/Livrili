@@ -92,6 +92,7 @@ export default function DashboardOverview() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month');
+  const [recentActivities, setRecentActivities] = useState<{ id: number; type: string; title: string; status: string; time: string; }[]>([]);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -158,6 +159,24 @@ export default function DashboardOverview() {
           setTruckCount(0);
           setError("Failed to load trucks count");
         }
+
+        try {
+          const activityRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/analytics/recent-activity`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+          });
+          if (activityRes.ok) {
+            const data = await activityRes.json();
+            setRecentActivities(data.map((item: any) => ({
+              id: item.id,
+              type: item.type,
+              title: item.label,
+              status: item.type === 'shipment' ? 'completed' : 'active',
+              time: item.created_at ? new Date(item.created_at).toLocaleDateString() : 'recent',
+            })));
+          }
+        } catch (e) {
+          console.error("Error fetching recent activity:", e);
+        }
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);
         setShipmentCount(82);
@@ -208,13 +227,6 @@ export default function DashboardOverview() {
   const chartLabels = selectedPeriod === 'week' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] :
                       selectedPeriod === 'month' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'] :
                       ['Q1', 'Q2', 'Q3', 'Q4'];
-
-  const recentActivities = [
-    { id: 1, type: 'shipment', title: 'Electronics shipment', status: 'completed', time: '2 hours ago' },
-    { id: 2, type: 'route', title: 'Algiers to Oran', status: 'active', time: '5 hours ago' },
-    { id: 3, type: 'shipment', title: 'Construction materials', status: 'in_transit', time: '1 day ago' },
-    { id: 4, type: 'route', title: 'Constantine to Annaba', status: 'completed', time: '2 days ago' },
-  ];
 
   const getActivityIcon = (type: string) => {
     if (type === 'shipment') return <AnalyticsIcons.activityShipmentIcon />;

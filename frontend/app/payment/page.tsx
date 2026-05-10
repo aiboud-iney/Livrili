@@ -36,7 +36,7 @@ const translations = {
     phoneNumber: "Phone Number",
     phonePlaceholder: "+213 550 123 456",
     emailAddress: "Email Address",
-    emailPlaceholder: "abdel@livrili-logistics.com",
+    emailPlaceholder: "livrili.team@gmail.com",
     submitButton: "Submit Payment for Verification",
     submitting: "Submitting...",
     whatHappensNext: "WHAT HAPPENS NEXT",
@@ -83,7 +83,7 @@ const translations = {
     phoneNumber: "Numéro de téléphone",
     phonePlaceholder: "+213 550 123 456",
     emailAddress: "Adresse e-mail",
-    emailPlaceholder: "abdel@livrili-logistics.com",
+    emailPlaceholder: "livrili.team@gmail.com",
     submitButton: "Soumettre le paiement pour vérification",
     submitting: "Envoi en cours...",
     whatHappensNext: "CE QUI SE PASSE ENSUITE",
@@ -175,6 +175,11 @@ export default function PaymentPage() {
   const notifRef     = useRef<HTMLDivElement>(null)
   const profileRef   = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) { setUploadedFile(f); setSubmitError(""); }
+  };
 
   useEffect(() => {
     setVisible(true)
@@ -481,7 +486,7 @@ export default function PaymentPage() {
                       <p className="text-xs" style={{ color: "#7C3AED" }}>{t.uploadReceiptSub}</p>
                     </>
                   )}
-                  <input ref={fileInputRef} type="file" accept="image/*" />
+                  <input ref={fileInputRef} type="file" accept="image/*,.pdf" onChange={handleFileSelect} style={{ display: 'none' }} />
                 </div>
               </div>
             </div>

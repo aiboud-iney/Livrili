@@ -63,7 +63,7 @@ export const signup = async (req, res) => {
     let emailSent = false;
 
     try {
-      await sendVerificationCode(email, verificationCode);
+      await sendVerificationCode(email, verificationCode, business_name);
       emailSent = true;
     } catch (emailError) {
       console.error("Email sending failed:", emailError.message);
@@ -157,7 +157,7 @@ export const resendVerification = async (req, res) => {
 
     let emailSent = false;
     try {
-      await sendVerificationCode(email, newCode);
+      await sendVerificationCode(email, newCode, userResult.rows[0]?.business_name);
       emailSent = true;
     } catch (emailError) {
       console.error("Resend failed:", emailError.message);

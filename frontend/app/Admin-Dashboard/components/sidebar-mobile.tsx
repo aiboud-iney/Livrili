@@ -14,7 +14,7 @@ interface Props {
 const menuItems = [
   { id: 'verifications', labelKey: 'verifications', iconPath: '/icons/verification sidebar light.png', activeIconPath: '/icons/verification sidebar.png' },
   { id: 'audit-logs', labelKey: 'auditLogs', iconPath: '/icons/audit logs sidebar.png', activeIconPath: '/icons/audit logs sidebar dark.png' },
-{id: 'Subscription', labelKey: 'Subscription', iconPath: '/icons/SubscriptiosLight.png',activeIconPath: '/icons/SubscriptionsDark.png',},
+{id: 'subscription', labelKey: 'Subscription', iconPath: '/icons/SubscriptiosLight.png',activeIconPath: '/icons/SubscriptionsDark.png',},
   { id: 'posts', labelKey: 'postsManagement', iconPath: '/icons/posts-sidebar-light.svg', activeIconPath: '/icons/posts-sidebar-dark.svg' }]
 
 export default function AdminSidebarMobile({ currentPage, onPageChange }: Props) {

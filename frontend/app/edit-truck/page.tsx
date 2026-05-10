@@ -660,7 +660,8 @@ function EditTruckPageContent() {
                   ref={fileInputRef}
                   type="file"
                   multiple
-                  accept="image/*" />
+                  accept="image/*"
+                  style={{ display: 'none' }} />
               </div>
               {photoPreviews.length > 0 && (
                 <div style={{ marginTop: "16px" }}>

@@ -19,6 +19,7 @@ import { ShipmentCard } from "@/app/feed/components/ShipmentCard";
 import { RouteCard } from "@/app/feed/components/RouteCard";
 import { Pagination } from "@/app/feed/components/Pagination";
 import { FeedToggle } from "@/app/feed/components/FeedToggle";
+import { FeedBottomNav } from "./components/bottomnavfeed";
 
 interface AdminFilterValues extends FilterValues {
   userSearch: string;
@@ -64,7 +65,7 @@ export default function AdminFeedPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (isAuthenticated && role !== "ADMIN" && role !== "admin") {
+    if (isAuthenticated && role?.toLowerCase() !== "admin") {
       router.push("/feed");
     }
   }, [isAuthenticated, role, router]);
@@ -366,8 +367,7 @@ export default function AdminFeedPage() {
       </div>
 
       {}
-      {/* @ts-expect-error AdminBottomNav component does not exist yet */}
-      {isMobile && <AdminBottomNav />}
+      {isMobile && <FeedBottomNav />}
     </div>
   );
 }

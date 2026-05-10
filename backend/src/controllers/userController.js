@@ -393,6 +393,7 @@ const approveUserVerification = async (req, res) => {
       `UPDATE users
        SET verified = true,
            verification = true,
+           verification_status = 'verified',
            verification_date = NOW(),
            updated_at = NOW()
        WHERE id = $1

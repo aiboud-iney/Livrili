@@ -31,7 +31,7 @@ export default function FeedBottomNav() {
 
   const NAV = [
     { label: 'HOME',      path: '/Admin-Dashboard/feed',      icon: '/icons/home gray phone.png',      iconActive: '/icons/home-active phone.png'      },
-    { label: 'SETTINGS',  path: '/support',  icon: '/icons/settings gray phone.png',  iconActive: '/icons/settings-active phone.png'  },
+    { label: 'SETTINGS',  path: '/settings',  icon: '/icons/settings gray phone.png',  iconActive: '/icons/settings-active phone.png'  },
     { label: 'DASHBOARD', path: '/Admin-Dashboard', icon: '/icons/dashboard gray phone.png', iconActive: '/icons/dashboard-active phone.png' },
     { label: 'PROFILE',   path: '/profile',   icon: '/icons/profile gray phone.png',   iconActive: '/icons/profile-active phone.png'   },
   ]
@@ -105,8 +105,8 @@ export default function FeedBottomNav() {
           <button
             className="feed-nav-item"
             aria-label="Settings"
-            onClick={() => router.push('/support')}
-            style={{ color: isActive('/support') ? ACTIVE_COLOR : INACTIVE_COLOR, fontWeight: isActive('/support') ? 700 : 500 }}
+            onClick={() => router.push('/settings')}
+            style={{ color: isActive('/settings') ? ACTIVE_COLOR : INACTIVE_COLOR, fontWeight: isActive('/settings') ? 700 : 500 }}
           >
             <img src={isActive('/support') ? NAV[1].iconActive : NAV[1].icon} alt="Settings" />
             <span>{NAV[1].label}</span>

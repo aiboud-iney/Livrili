@@ -1,7 +1,10 @@
 import pool from '../config/db.js';
 import path from 'path';
 import fs from 'fs';
-import sendEmail from '../utils/mailer.js';
+import sendEmail, {
+  sendSubscriptionAcceptedEmail,
+  sendSubscriptionRejectedEmail
+} from '../utils/mailer.js';
 
 const createSubscription = async (req, res) => {
   const {
@@ -229,9 +232,10 @@ const deleteSubscription = async (req, res) => {
   try {
 
     const findQuery = `
-      SELECT us.receipt, u.email, u.business_name
+      SELECT us.receipt, u.email, u.business_name, p.name as plan_name
       FROM user_subscriptions us
       JOIN users u ON us.user_id = u.id
+      JOIN plans p ON us.plan_id = p.id
       WHERE us.id = $1
     `;
     const subResult = await pool.query(findQuery, [id]);
@@ -240,7 +244,7 @@ const deleteSubscription = async (req, res) => {
       return res.status(404).json({ message: "Subscription not found" });
     }
 
-    const { receipt, email, business_name } = subResult.rows[0];
+    const { receipt, email, business_name, plan_name } = subResult.rows[0];
 
     await pool.query('DELETE FROM user_subscriptions WHERE id = $1', [id]);
 
@@ -253,10 +257,11 @@ const deleteSubscription = async (req, res) => {
       }
     }
 
-    const emailSubject = "Update on your Subscription Request";
-    const emailText = `Hello ${business_name || 'Valued User'},\n\nYour subscription got rejected.\n\nPlease check your payment details and submit a new request if needed.`;
-
-    await sendEmail(email, emailSubject, emailText);
+    await sendSubscriptionRejectedEmail(email, {
+      name: business_name,
+      planName: plan_name,
+      reason: 'Your payment receipt could not be verified. Please check your payment details and try again.'
+    });
 
     await pool.query(
       `INSERT INTO notifications (user_id, title, message, type)
@@ -316,6 +321,27 @@ const activateSubscription = async (req, res) => {
          VALUES ($1, 'Subscription Activated', 'Your premium subscription has been activated. Enjoy unlimited access!', 'success')`,
         [user_id]
       ).catch(() => {});
+
+      const detailsRes = await pool.query(`
+        SELECT u.email, u.business_name, p.name as plan_name, p.price, p.description,
+               us.start_date, us.end_date, us.billing_cycle, us.amount
+        FROM user_subscriptions us
+        JOIN users u ON us.user_id = u.id
+        JOIN plans p ON us.plan_id = p.id
+        WHERE us.id = $1
+      `, [id]);
+      if (detailsRes.rows.length > 0) {
+        const d = detailsRes.rows[0];
+        sendSubscriptionAcceptedEmail(d.email, {
+          name: d.business_name,
+          planName: d.plan_name,
+          amount: d.amount || d.price,
+          startDate: d.start_date,
+          endDate: d.end_date,
+          billingCycle: d.billing_cycle,
+          features: d.description ? d.description.split(',').map(s => s.trim()) : [],
+        }).catch(err => console.error('Failed to send subscription email:', err.message));
+      }
     }
 
     res.status(200).json({

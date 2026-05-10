@@ -149,7 +149,7 @@ export const deleteTruck = async (req, res) => {
       "SELECT id FROM routes WHERE assigned_truck_id = $1 AND status NOT IN ('completed','cancelled') LIMIT 1",
       [id]
     );
-    if (activeRoute.rows.length > 0) {
+    if (req.user.user_type !== "admin" && activeRoute.rows.length > 0) {
       return res.status(409).json({ message: "Cannot delete a truck that is assigned to an active route" });
     }
 

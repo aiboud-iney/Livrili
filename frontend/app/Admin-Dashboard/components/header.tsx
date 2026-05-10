@@ -26,7 +26,7 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="bg-white border-b border-[#e0e0e0] px-8 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-[#e0e0e0] px-4 md:px-8 py-4 flex items-center justify-between">
       <button
        className="h-9 px-4 text-[13px] font-semibold rounded-md bg-[#FFFFFF] text-[#202020] border border-[#7E52FF] "
       >

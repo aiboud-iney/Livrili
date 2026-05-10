@@ -43,6 +43,7 @@ const ICONS = {
   arrowRight: "/icons/fleche details.png",
   chevronLeft: "/icons/go left dashboard.png",
   chevronRight: "/icons/go right dashboard.png",
+  user: "/icons/user.png",
 };
 
 export default function MyShipments() {

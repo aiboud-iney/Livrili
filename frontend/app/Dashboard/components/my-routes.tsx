@@ -37,6 +37,7 @@ const ICONS = {
   externalLink: "/icons/details dashboard.png",
   chevronLeft: "/icons/go left dashboard.png",
   chevronRight: "/icons/go right dashboard.png",
+  user: "/icons/user.png",
 };
 
 export default function MyRoutes() {

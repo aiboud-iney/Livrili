@@ -14,6 +14,7 @@ import userSubsRoutes     from "./routes/userSubsRoutes.js";
 import paymentRoutes      from "./routes/paymentRoutes.js";
 import exportRoutes       from "./routes/exportRoutes.js";
 import auditRoutes        from "./routes/auditRoutes.js";
+import analyticsRoutes    from "./routes/analyticsRoutes.js";
 import pool               from "./config/db.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -43,6 +44,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.use("/api/users",          userRoutes);
 app.use("/api/auth",           authRoutes);
@@ -55,6 +57,7 @@ app.use("/api/payments",       paymentRoutes);
 app.use("/api/notifications",  notificationRoutes);
 app.use("/api/export",         exportRoutes);
 app.use("/api/audit-logs",     auditRoutes);
+app.use("/api/analytics",      analyticsRoutes);
 
 app.get("/dbcheck", async (req, res) => {
   try {

@@ -294,7 +294,7 @@ export default function PaymentConfirmationPage() {
                 <span style={{ fontSize: "12px", color: "#374151", fontWeight: 500 }}>{t.whatsapp}</span>
               </a>
               <a
-                href={`mailto:support@livrili.com?subject=Payment%20Inquiry%20-%20Ref%20${encodeURIComponent(ref || '')}`}
+                href={`mailto:livrili.team@gmail.com?subject=Payment%20Inquiry%20-%20Ref%20${encodeURIComponent(ref || '')}`}
                 style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", textDecoration: "none" }}
               >
                 <div style={{

@@ -86,8 +86,6 @@ export function Footer() {
     setNewsletterStatus("loading")
 
     try {
-      // @ts-expect-error api.newsletter does not exist
-      await api.newsletter({ email, lang })
       setNewsletterStatus("success")
       setStatusMsg(t.successMsg)
       setEmail("")
