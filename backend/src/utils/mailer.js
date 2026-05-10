@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 import dotenv from 'dotenv';
 
 import { otpTemplate } from '../views/emails/otp.js';

@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -13,6 +15,7 @@ const transporter = nodemailer.createTransport({
   connectionTimeout: 10000,
   socketTimeout: 10000,
   requireTLS: true,
+  tls: { rejectUnauthorized: false },
 });
 
 export async function sendOtpEmail(userEmail, otp) {

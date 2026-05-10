@@ -85,8 +85,7 @@ export const signup = async (req, res) => {
       console.error('Email failed — rolling back user:', emailError.message, emailError.stack);
       await pool.query('DELETE FROM users WHERE email = $1', [email.toLowerCase()]);
       return res.status(500).json({
-        message: 'Failed to send verification email. Please try again.',
-        error: emailError.message
+        message: 'Failed to send verification email. Please try again.'
       });
     }
 
