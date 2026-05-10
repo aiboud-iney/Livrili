@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import dns from 'dns';
 
 import { otpTemplate } from '../views/emails/otp.js';
 import { welcomeTemplate } from '../views/emails/welcome.js';
@@ -10,14 +11,26 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 
 dotenv.config();
 
+const GMAIL_HOST = (() => {
+  try {
+    return dns.lookupSync('smtp.gmail.com', { family: 4 }).address;
+  } catch {
+    return 'smtp.gmail.com';
+  }
+})();
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: GMAIL_HOST,
+  port: 587,
+  secure: false,
+  requireTLS: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASS,
   },
   connectionTimeout: 10000,
   socketTimeout: 10000,
+  tls: { servername: 'smtp.gmail.com' },
 });
 
 const FROM = '"Livrili" <livrili.team@gmail.com>';

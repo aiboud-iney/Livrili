@@ -1,15 +1,28 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import dns from 'dns';
 dotenv.config();
 
+const GMAIL_HOST = (() => {
+  try {
+    return dns.lookupSync('smtp.gmail.com', { family: 4 }).address;
+  } catch {
+    return 'smtp.gmail.com';
+  }
+})();
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: GMAIL_HOST,
+  port: 587,
+  secure: false,
+  requireTLS: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASS,
   },
   connectionTimeout: 10000,
   socketTimeout: 10000,
+  tls: { servername: 'smtp.gmail.com' },
 });
 
 export async function sendOtpEmail(userEmail, otp) {
