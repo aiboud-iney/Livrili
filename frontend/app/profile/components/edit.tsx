@@ -84,14 +84,14 @@ export function EditProfilePage({
   }, [currentUserId]);
 
   const [form, setForm] = useState<EditProfileData>({
-    legalCompanyName: companyName,
-    category: category,
-    tradeRegister: tradeRegister,
-    tin: tinNif,
-    phoneNumber: phone,
-    email: userEmail,
-    headquartersAddress: headquartersAddress,
-    bio: bioContent,
+    legalCompanyName: companyName ?? '',
+    category: category ?? '',
+    tradeRegister: tradeRegister ?? '',
+    tin: tinNif ?? '',
+    phoneNumber: phone ?? '',
+    email: userEmail ?? '',
+    headquartersAddress: headquartersAddress ?? '',
+    bio: bioContent ?? '',
   });
 
   const filledCount = Object.values(form).filter((v) => (v ?? '').trim() !== '').length;
