@@ -29,6 +29,7 @@ interface ProfilePageProps {
   verified?: boolean;
   createdAt?: string;
   profilePicture?: string;
+  category?: string;
 }
 
 export function ProfilePage({
@@ -50,6 +51,7 @@ export function ProfilePage({
   verified,
   createdAt,
   profilePicture,
+  category = '',
 }: ProfilePageProps) {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -96,6 +98,12 @@ export function ProfilePage({
         profileImage={displayImage}
         bioContent={bioContent}
         userId={userId}
+        userEmail={userEmail}
+        phone={phone}
+        tinNif={tinNif}
+        tradeRegister={tradeRegister}
+        category={category}
+        headquartersAddress={location}
         onDiscard={() => setIsEditing(false)}
         onSave={(data) => {
 
@@ -113,6 +121,12 @@ export function ProfilePage({
         profileImage={displayImage}
         bioContent={bioContent}
         userId={userId}
+        userEmail={userEmail}
+        phone={phone}
+        tinNif={tinNif}
+        tradeRegister={tradeRegister}
+        category={category}
+        headquartersAddress={location}
         onDiscard={() => setIsEditing(false)}
         onSave={(data) => {
 

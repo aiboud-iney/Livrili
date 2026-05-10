@@ -22,6 +22,9 @@ type ProfileData = {
   createdAt: string;
   bioContent: string;
   profilePicture?: string;
+  category?: string;
+  headquartersAddress?: string;
+  id?: string;
 };
 
 type LoadingState = 'loading' | 'success' | 'error';
@@ -92,6 +95,9 @@ export default function Profile() {
           createdAt:     user.created_at,
           bioContent:    user.more_details || '',
           profilePicture: formatImageUrl(user.profile_picture),
+          category:      user.category || '',
+          headquartersAddress: user.headquarters_address || '',
+          id:            user.id,
         });
 
         setLoadingState('success');
@@ -164,9 +170,11 @@ export default function Profile() {
         userType={profileData.userType}
         verified={profileData.verified}
         createdAt={profileData.createdAt}
-        location="Algiers, Algeria"
+        location={profileData.headquartersAddress || "Algiers, Algeria"}
         bioContent={profileData.bioContent}
         profilePicture={profileData.profilePicture}
+        category={profileData.category}
+        userId={profileData.id}
         rating={4.8}
         reviews={128}
       />

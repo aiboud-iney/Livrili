@@ -13,6 +13,12 @@ interface EditProfilePageProps {
   bioContent?: string;
   profileImage?: string;
   userId?: string;
+  userEmail?: string;
+  phone?: string;
+  tinNif?: string;
+  tradeRegister?: string;
+  category?: string;
+  headquartersAddress?: string;
   onSave?: (data: EditProfileData) => void;
   onDiscard?: () => void;
 }
@@ -33,6 +39,12 @@ export function EditProfilePage({
   bioContent = '',
   profileImage = '/icons/avatar.png',
   userId,
+  userEmail = '',
+  phone = '',
+  tinNif = '',
+  tradeRegister = '',
+  category = '',
+  headquartersAddress = '',
   onSave,
   onDiscard,
 }: EditProfilePageProps) {
@@ -72,13 +84,13 @@ export function EditProfilePage({
   }, [currentUserId]);
 
   const [form, setForm] = useState<EditProfileData>({
-    legalCompanyName: '',
-    category: '',
-    tradeRegister: '',
-    tin: '',
-    phoneNumber: '',
-    email: '',
-    headquartersAddress: '',
+    legalCompanyName: companyName,
+    category: category,
+    tradeRegister: tradeRegister,
+    tin: tinNif,
+    phoneNumber: phone,
+    email: userEmail,
+    headquartersAddress: headquartersAddress,
     bio: bioContent,
   });
 
