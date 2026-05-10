@@ -36,11 +36,11 @@ const ProfileDropdown = forwardRef<HTMLDivElement, Props>(({ show }, ref) => {
       href: role === 'admin' ? "/Admin-Dashboard/feed" : "/feed",
       icon:"/icons/home dropdown.png",
     },
-    {
+    ...(role !== 'admin' ? [{
       label: t.profile,
       href: "/profile",
       icon: "/icons/me.png",
-    },
+    }] : []),
     {
       label: t.dashboard,
       href: role === 'admin' ? "/Admin-Dashboard" : "/Dashboard",
