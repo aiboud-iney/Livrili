@@ -80,6 +80,7 @@ const getAllUsers = async (req, res) => {
        FROM users u
        LEFT JOIN user_subscriptions us ON us.user_id = u.id AND us.status = 'active'
        LEFT JOIN plans p ON p.id = us.plan_id
+       WHERE u.verified = true
        ORDER BY u.created_at DESC`
     );
 
@@ -98,7 +99,7 @@ const getUserById = async (req, res) => {
     const result = await pool.query(
       `SELECT id, email, business_name, phone_number,
               tin_nif, trade_register, user_type, verified,
-              verification_date, created_at, updated_at, more_details, category, headquarters_address, profile_picture,
+              verification, verification_date, created_at, updated_at, more_details, category, headquarters_address, profile_picture,
               COALESCE(verification_status, 'not_requested') as verification_status,
               verification_requested_at,
               verification_rejected_reason

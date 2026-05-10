@@ -1,24 +1,20 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASS,
   },
+  connectionTimeout: 10000,
+  socketTimeout: 10000,
 });
 
-const FROM = '"Livrili" <livrili.team@gmail.com>';
-
 export async function sendOtpEmail(userEmail, otp) {
-  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASS) {
-    console.log('Gmail SMTP not configured');
-    return false;
-  }
-
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,17 +74,12 @@ export async function sendOtpEmail(userEmail, otp) {
 </body>
 </html>`;
 
-  try {
-    const info = await transporter.sendMail({
-      from: FROM,
-      to: userEmail,
-      subject: 'Verify your Livrili Account',
-      html,
-    });
-    console.log('OTP email sent:', info.messageId);
-    return true;
-  } catch (error) {
-    console.error('Error sending OTP email:', error.message);
-    return false;
-  }
+  const info = await transporter.sendMail({
+    from: '"Livrili" <livrili.team@gmail.com>',
+    to: userEmail,
+    subject: 'Verify your Livrili Account',
+    html,
+  });
+
+  console.log('OTP email sent:', info.messageId);
 }

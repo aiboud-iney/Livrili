@@ -9,6 +9,7 @@ interface ProfileCardProps {
   rating: number;
   reviews: number;
   onEditProfile?: () => void;
+  verification?: boolean;
 }
 
 export function ProfileCard({
@@ -18,6 +19,7 @@ export function ProfileCard({
   rating,
   reviews,
   onEditProfile,
+  verification,
 }: ProfileCardProps) {
   const { t } = useLang();
 
@@ -94,13 +96,27 @@ export function ProfileCard({
 
         {}
         <div className="flex-1 pt-4">
-          <h1 className="name-enter" style={{
-            fontFamily: "'Kamerik 105', sans-serif",
-            fontSize: '36px', fontWeight: 700, color: '#111',
-            marginBottom: '16px', letterSpacing: '-0.5px',
-          }}>
-            {companyName}
-          </h1>
+          <div className="name-enter flex items-center gap-3" style={{ marginBottom: '12px' }}>
+            <h1 style={{
+              fontFamily: "'Kamerik 105', sans-serif",
+              fontSize: '36px', fontWeight: 700, color: '#111',
+              letterSpacing: '-0.5px',
+            }}>
+              {companyName}
+            </h1>
+            {verification !== undefined && (
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '4px',
+                fontSize: '12px', fontWeight: 600, padding: '4px 12px',
+                borderRadius: '999px', whiteSpace: 'nowrap',
+                backgroundColor: verification ? '#dcfce7' : '#f3f4f6',
+                color: verification ? '#16a34a' : '#6b7280',
+                border: `1px solid ${verification ? '#bbf7d0' : '#e5e7eb'}`,
+              }}>
+                {verification ? 'Verified by Admin' : 'Not Verified by Admin'}
+              </span>
+            )}
+          </div>
 
           <div className="loc-enter flex items-center gap-2" style={{ marginBottom: '24px' }}>
             <img src="/icons/localisation.png" alt="location" className="w-5 h-5 object-contain" />

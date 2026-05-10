@@ -27,6 +27,7 @@ interface ProfilePageProps {
   tradeRegister?: string;
   userType?: string;
   verified?: boolean;
+  verification?: boolean;
   createdAt?: string;
   profilePicture?: string;
   category?: string;
@@ -49,6 +50,7 @@ export function ProfilePage({
   tradeRegister,
   userType,
   verified,
+  verification,
   createdAt,
   profilePicture,
   category = '',
@@ -167,6 +169,7 @@ export function ProfilePage({
               reviews={reviews}
               profileImage={displayImage}
               onEditProfile={handleEdit}
+              verification={verification}
             />
             <BioSection bioContent={bioContent} />
           </div>

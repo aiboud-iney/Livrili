@@ -29,7 +29,14 @@ export const signup = async (req, res) => {
           "UPDATE users SET verification_code = $1 WHERE email = $2",
           [newCode, email.toLowerCase()]
         );
-        await sendOtpEmail(email, newCode);
+        try {
+          await sendOtpEmail(email, newCode);
+        } catch (emailError) {
+          console.error('Resend OTP for unverified user failed:', emailError.message);
+          return res.status(500).json({
+            message: 'Failed to send verification email. Please try again.'
+          });
+        }
         return res.status(200).json({
           message: "Account already exists. New OTP sent to your email."
         });
@@ -72,21 +79,18 @@ export const signup = async (req, res) => {
 
     const user = result.rows[0];
 
-    let emailSent = false;
-
     try {
-      const result = await sendOtpEmail(email, verificationCode);
-      emailSent = result;
+      await sendOtpEmail(email, verificationCode);
     } catch (emailError) {
-      console.error("Email sending failed:", emailError.message);
+      console.error('Email failed — rolling back user:', emailError.message);
+      await pool.query('DELETE FROM users WHERE email = $1', [email.toLowerCase()]);
+      return res.status(500).json({
+        message: 'Failed to send verification email. Please try again.'
+      });
     }
 
     res.status(201).json({
-      message: emailSent
-        ? "User registered. Please check your email for the verification code."
-        : "User registered. Use verification code: " + verificationCode,
-      emailSent,
-      verificationCode: emailSent ? null : verificationCode,
+      message: 'Account created! Please check your email for the verification code.',
       user: { email: user.email }
     });
   } catch (error) {
@@ -167,21 +171,15 @@ export const resendVerification = async (req, res) => {
       [newCode, email]
     );
 
-    let emailSent = false;
     try {
-      const result = await sendOtpEmail(email, newCode);
-      emailSent = result;
+      await sendOtpEmail(email, newCode);
+      res.status(200).json({ message: 'Verification code resent successfully' });
     } catch (emailError) {
-      console.error("Resend failed:", emailError.message);
+      console.error('Resend failed:', emailError.message);
+      res.status(500).json({
+        message: 'Failed to send email. Please try again.'
+      });
     }
-
-    res.status(200).json({
-      message: emailSent
-        ? "Verification code resent successfully"
-        : "Verification code: " + newCode,
-      emailSent,
-      verificationCode: emailSent ? null : newCode,
-    });
 
   } catch (error) {
     console.error('Resend Code Error:', error);
@@ -206,6 +204,10 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (!user.verified) {
+      return res.status(401).json({ message: "Please verify your email before logging in." });
     }
 
     const token = jwt.sign(

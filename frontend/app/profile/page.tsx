@@ -19,6 +19,7 @@ type ProfileData = {
   tradeRegister: string;
   userType: string;
   verified: boolean;
+  verification: boolean;
   createdAt: string;
   bioContent: string;
   profilePicture?: string;
@@ -92,6 +93,7 @@ export default function Profile() {
           tradeRegister: user.trade_register,
           userType:      user.user_type,
           verified:      user.verified,
+          verification:  user.verification,
           createdAt:     user.created_at,
           bioContent:    user.more_details || '',
           profilePicture: formatImageUrl(user.profile_picture),
@@ -169,6 +171,7 @@ export default function Profile() {
         tradeRegister={profileData.tradeRegister}
         userType={profileData.userType}
         verified={profileData.verified}
+        verification={profileData.verification}
         createdAt={profileData.createdAt}
         location={profileData.headquartersAddress || "Algiers, Algeria"}
         bioContent={profileData.bioContent}

@@ -11,11 +11,15 @@ import { subscriptionRejectedTemplate } from '../views/emails/subscriptionReject
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASS,
   },
+  connectionTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 const FROM = '"Livrili" <livrili.team@gmail.com>';
