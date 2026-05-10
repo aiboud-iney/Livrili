@@ -16,13 +16,13 @@ INSERT INTO users (id, email, password, business_name, phone_number, tin_nif,
 VALUES
 
   (1, 'admin@livrili.test',
-   '$2b$10$HvxEA.Xa47nkU4AkTj1Bpe0vp/pe2o/t7BdpMU4WyMbeVRUsMsFtq',
+   '$2b$10$W2nXGd96mT0yfCh.do36cOyg3E2hPznGQivjQHEH1GYLLJTIkG66y',
    'Livrili Administration', '0213456789', 'ADMIN001', 'ADM-REG-001',
    'admin', true, true, 'Platform Administration', '16 - Alger',
    NOW() - INTERVAL '6 months'),
 
   (2, 'user@livrili.test',
-   '$2b$10$blo1X39HvupykLPivNwmS.6P0UkXCfxsjpqzFmATV/0oUQJuhhfWe',
+   '$2b$10$/YavZnBIXP80EyYCxpcwX.zyiNpb16HlmcTaXbxVwAlChYQ8tXV/6',
    'Transporteurs du Nord', '0550123456', 'TIN-002', 'REG-002',
    'user', true, true, 'Transport & Logistics', '16 - Alger',
    NOW() - INTERVAL '5 months'),
